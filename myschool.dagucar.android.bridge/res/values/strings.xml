@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">DaguCar Verbindung</string>
+    <string name="button_start">Starte Verbindung (Tcp-Port 18080)</string>
+    <string name="button_stop">Stopp</string>
+    <string name="button_refresh">Aktualisieren</string>
+
+</resources>
