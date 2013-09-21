@@ -20,6 +20,10 @@ public class ConnectionProviderBluetooth implements ConnectionProvider {
 
 	@Override
 	public OutputStream openConnection(Object connectionParameter) throws IOException {
+		SecurityManager appsm = System.getSecurityManager();
+		if (appsm!=null) {
+			System.out.println("SecurityManager " + appsm);
+		}
 		System.out.println("Used Bluetooth Stack: " + LocalDevice.getProperty("bluecove.stack"));
         if (this.serviceURL==null) {
             throw new IllegalStateException("Service URL must not be null when cmd is sent!");

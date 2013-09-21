@@ -58,8 +58,8 @@ public class RemoteControl {
     public void sendGoStraight() {
         try {
             if (!this.isActive()) return; //make sure the connection is active
-            this.sendNextState(DirectionCommand.NORTH,SpeedCommand.SLOW, 200); //speed up
-            this.sendNextState(DirectionCommand.NORTH,SpeedCommand.CRUISING, (int) (400*factor)); //hold speed
+            this.sendNextState(DirectionCommand.NORTH,SpeedCommand.CRUISING, 2000); //speed up
+            this.sendNextState(DirectionCommand.NORTH,SpeedCommand.FAST, (int) (4000*factor)); //hold speed
             this.sendNextState(DirectionCommand.NORTH,SpeedCommand.STOP, 400); //role along
         } catch (Exception e) {
             System.out.println("Could not send 'go straight' to DaguCar: " + e.getMessage());
@@ -140,11 +140,26 @@ public class RemoteControl {
      * technical documentation under http://dlnmh9ip6v2uc.cloudfront.net/datasheets/Robotics/DaguCarCommands.pdf.
      */
     private void sendNextState(DirectionCommand direction, SpeedCommand speed, int milliseconds) throws IOException {
+    	if (connectionProvider instanceof ConnectionProviderBluetooth) {
+    		sendNextStateBluetooth(direction, speed, milliseconds);
+    		return;
+    	}
     	ByteBuffer buffer = ByteBuffer.allocate(5);
     	buffer.put((byte)(direction.code + speed.code));
     	byte[] bytes =buffer.putInt(milliseconds).array();
     	os.write(bytes);
         os.flush();
+    }
+    
+    private void sendNextStateBluetooth(DirectionCommand direction, SpeedCommand speed, int milliseconds) throws IOException {
+    	os.write((byte)(direction.code + speed.code));
+        os.flush();
+        try {
+			Thread.sleep(milliseconds);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     /*
