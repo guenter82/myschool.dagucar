@@ -2,9 +2,7 @@ package org.myschool.dagucar.simulator.beginner.compiler;
 
 import java.io.File;
 
-import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
-import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileObject;
@@ -17,18 +15,10 @@ public class SimJavaCompiler implements Runnable {
 	
 	
 	public static final SimJavaCompiler javaCompiler= new SimJavaCompiler();
-	
-	enum State {
-		NOT_READY,
-		READY,
-		RUNNING,
-	}
-	
-	private State state;
+
 	private SimContext context;
 	
 	private SimJavaCompiler() {
-		this.state=State.NOT_READY;
 	}
 	
 	public void setContext(SimContext context) {
@@ -37,6 +27,12 @@ public class SimJavaCompiler implements Runnable {
 	
 	@Override
 	public void run() {
+		assert context!=null;
+		if ( context.getSourcefile() == null) {
+			System.out.println("No source file provided");
+			return;
+		}
+		
 		JavaCompiler compiler= ToolProvider.getSystemJavaCompiler();
 		DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<JavaFileObject>();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnosticCollector, SimContext.local, SimContext.charset);
@@ -44,36 +40,26 @@ public class SimJavaCompiler implements Runnable {
 		CompilationTask compTask = compiler.getTask(null, fileManager, diagnosticCollector, null, null, filesToCompile);
 		Boolean result = compTask.call();
 		
-		for (Diagnostic<? extends JavaFileObject> d: diagnosticCollector.getDiagnostics() ) {
-			report(d);
-		}
+		context.setMessages(diagnosticCollector.getDiagnostics());
 		
 		if(result == true) {
-			System.out.println("Compilation has succeeded");
+			System.out.println("Compilation was succeeded");
 			setClassFileToContext();
 		} else {
 			System.out.println("Compilation fails.");
+			this.context.setCompilerException();
 		}
 	}
 	
 	private void setClassFileToContext() {
-		String filename = context.getSourcefile().getPath().replace(".java", ".class");
-		this.context.setClassfile(new File(filename));
+		String classpath = context.getSourcefile().getPath().replace(".java", ".class");
+		this.context.setClassname(context.getSourcefile().getName().replace(".java", ""));
+		this.context.setClassfile(new File(classpath));
+		
 		
 	}
 
-		private void report(Diagnostic<? extends JavaFileObject> diagnostic) {
-			System.out.println("Code->" +  diagnostic.getCode());
-			System.out.println("; Column Number->" + diagnostic.getColumnNumber());
-			System.out.println("; End Position->" + diagnostic.getEndPosition());
-			System.out.println("; Kind->" + diagnostic.getKind());
-			System.out.println("; Line Number->" + diagnostic.getLineNumber());
-			System.out.println("; Message->"+ diagnostic.getMessage(SimContext.local));
-			System.out.println("; Position->" + diagnostic.getPosition());
-			System.out.println("; Source" + diagnostic.getSource());
-			System.out.println("; Start Position->" + diagnostic.getStartPosition());
-			System.out.println("\n");
-	}		
+			
 		
 }
 	
