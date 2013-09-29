@@ -62,23 +62,8 @@ public class SimContext {
 		if (!dirs.exists()) {
 			dirs.mkdirs();
 		}
-		addClasspath();
 	}
 
-	private void addClasspath() {
-		ClassLoader currentThreadClassLoader
-		 = Thread.currentThread().getContextClassLoader();
-
-		URLClassLoader urlClassLoader;
-		try {
-			urlClassLoader = new URLClassLoader(new URL[]{Paths.get(this.datahomegen+"/").toUri().toURL()},
-			                      currentThreadClassLoader);
-
-			Thread.currentThread().setContextClassLoader(urlClassLoader);
-		} catch (MalformedURLException e) {
-			throw new IllegalStateException("Could not add user directory to classpath.", e);
-		}
-	}
 	
 	public String getClassname() {
 		return classname;

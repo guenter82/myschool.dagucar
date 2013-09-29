@@ -3,6 +3,10 @@ package org.myschool.dagucar.simulator.beginner.controller;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Paths;
 
 import javax.swing.SwingUtilities;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -18,7 +22,7 @@ public class SimController implements Runnable{
 	
 	private SimContext context = SimContext.context;
 	private SimJavaCompiler compiler = SimJavaCompiler.javaCompiler;
-	private DaguCarControllerWrapper actorController = new DaguCarControllerWrapper();
+	private DaguCarControllerWrapper actorController = SimContext.actorController;
 	
 
 	public SimController() {
@@ -75,10 +79,22 @@ public class SimController implements Runnable{
 
 	private DaguCarSteuerung loadActorRoboter() throws ClassNotFoundException,
 			InstantiationException, IllegalAccessException {
+		URLClassLoader classloader=createExtendedClassloader();
 		@SuppressWarnings("unchecked")
-		Class<? extends DaguCarSteuerung> mycarClass = (Class<? extends DaguCarSteuerung>) Class.forName(context.getClassname());
+		Class<? extends DaguCarSteuerung> mycarClass = (Class<? extends DaguCarSteuerung>) classloader.loadClass(context.getClassname());
 		DaguCarSteuerung robot=mycarClass.newInstance();
 		return robot;
+	}
+	
+	private URLClassLoader createExtendedClassloader() {
+		try {
+			URL[] urls = new URL[]{Paths.get(this.context.getDatahomegen()+"/").toUri().toURL()};
+			URLClassLoader urlClassLoader = new URLClassLoader(urls,
+					Thread.currentThread().getContextClassLoader());
+			return urlClassLoader;
+		} catch (MalformedURLException e) {
+			throw new IllegalStateException("Could not add user directory to classpath.", e);
+		}
 	}
 
 	private SimCompilationResult generateResult() {

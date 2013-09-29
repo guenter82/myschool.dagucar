@@ -12,6 +12,7 @@ public class DaguCarActorWrapper implements DaguCar {
 	}
 	@Override
 	public void fahreVor() {
+		System.out.println("Fahre vor");
 		for (DaguCarActor actor:actors) {
 			actor.goAhead();	
 		}

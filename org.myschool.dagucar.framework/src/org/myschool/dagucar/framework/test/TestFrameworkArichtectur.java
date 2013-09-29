@@ -2,52 +2,36 @@ package org.myschool.dagucar.framework.test;
 
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.myschool.dagucar.framework.command.DirectionCommand;
 import org.myschool.dagucar.framework.command.SpeedCommand;
+import org.myschool.dagucar.framework.program.ServerContext;
+import org.myschool.dagucar.framework.program.StartDaguCarServer;
 import org.myschool.dagucar.framework.remote.RemoteControl;
-import org.myschool.dagucar.framework.test.mock.TcpServer;
 
-public class TestWlanConnection {
+public class TestFrameworkArichtectur {
 
-	
 	RemoteControl remote = RemoteControl.remoteViaTcp;
-	Thread tcpserver;
-	@Before
-	public void setUp() {
-		tcpserver = new Thread(new TcpServer());
-		tcpserver.setDaemon(false);
-		tcpserver.start();
+	@BeforeClass
+	public static void setUp() throws InterruptedException {
+		StartDaguCarServer.main(new String[]{ServerContext.arg0});
+		Thread.sleep(5000); //time for tcp server
 	}
 	
-	@After
-	public void cleanUp() {
-		try {
-			Thread.sleep(200*1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} finally {
-		 tcpserver.interrupt();
-		}
-		
-	}
 
-	
+	@Test
 	public void testLocalTcpConnection() throws InterruptedException {
 		try {
 			remote.activate("127.0.0.1");
 			remote.sendGoStraight();
-			remote.shutDown();
-			Thread.sleep(200*1000);
+			Thread.sleep(500 * 1000);
 		} catch (IOException e) {
 			throw new AssertionError(e);
 		}
 	}
 	
 	
-	@Test
 	public void testAllCommands() throws InterruptedException {
 
 		try {

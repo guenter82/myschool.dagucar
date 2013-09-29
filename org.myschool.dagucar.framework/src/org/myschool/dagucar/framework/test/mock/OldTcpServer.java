@@ -11,7 +11,7 @@ import org.myschool.dagucar.framework.command.CommandUtils;
 import org.myschool.dagucar.framework.remote.ConnectionProviderBluetooth;
 import org.myschool.dagucar.framework.remote.RemoteControl;
 
-public class TcpServer implements Runnable {
+public class OldTcpServer implements Runnable {
 
 	private static final int port = 8080;
 	//private static final String bindip = "127.0.0.1";

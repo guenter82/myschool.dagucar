@@ -3,9 +3,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
-import org.myschool.dagucar.framework.command.CommandUtils;
 import org.myschool.dagucar.framework.command.DirectionCommand;
 import org.myschool.dagucar.framework.command.SpeedCommand;
+import org.myschool.dagucar.framework.program.ServerContext;
 
 /**
  * When the BluetoothSender is active the model car commandos are also send via bluetooth to the pysical
@@ -42,7 +42,7 @@ public class RemoteControl {
     /**
      * Singelton instance is used by all worlds"
      */
-    public static final RemoteControl remoteViaTcp=new RemoteControl(new ConnectionProviderTcpClient(18080));
+    public static final RemoteControl remoteViaTcp=new RemoteControl(new ConnectionProviderTcpClient(8080));
 
 
 
@@ -144,7 +144,12 @@ public class RemoteControl {
     		sendNextStateBluetooth(direction, speed, milliseconds);
     		return;
     	}
-    	ByteBuffer buffer = ByteBuffer.allocate(5);
+    	int dagucarNumber = 4;
+    	ByteBuffer buffer = ByteBuffer.allocate(9);
+    	buffer.put(ServerContext.firstHandshakeByte);
+    	buffer.put(ServerContext.secondHandshakeByte);
+    	buffer.put(ServerContext.handleCommandServiceByte);
+    	buffer.put((byte)dagucarNumber);
     	buffer.put((byte)(direction.code + speed.code));
     	byte[] bytes =buffer.putInt(milliseconds).array();
     	os.write(bytes);

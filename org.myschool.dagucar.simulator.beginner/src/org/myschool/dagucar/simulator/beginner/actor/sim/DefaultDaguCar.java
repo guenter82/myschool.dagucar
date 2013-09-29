@@ -13,26 +13,31 @@ public class DefaultDaguCar extends Actor implements DaguCarActor{
 	@Override
 	public void goAhead() {
 		this.move(1);
-		//this.gameGrid.repaint();
+		this.gameGrid.repaint();
 	}
 
 	@Override
 	public void goBack() {
 		this.move(-1);
-		this.act();
+		this.gameGrid.repaint();
 	}
 
 	@Override
 	public void goTurnHalfLeft() {
 		this.move(1);
+		this.gameGrid.repaint();
 		this.setDirection(this.getDirection() - 45);
+		this.gameGrid.repaint();
 		this.move(1);
+		this.gameGrid.repaint();
 	}
 
 	@Override
 	public void goTurnHalfRight() {
 		this.move(1);
+		this.gameGrid.repaint();
 		this.setDirection(this.getDirection() + 45);
+		this.gameGrid.repaint();
 		this.move(1);
 	}
 
