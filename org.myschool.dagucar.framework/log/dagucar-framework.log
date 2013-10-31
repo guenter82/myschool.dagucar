@@ -1,0 +1,121 @@
+19:20:33,860[DaguCar-1-Thread] DEBUG bluetooth:121 - Java 1.4+ detected: 1.7.0_21; Java HotSpot(TM) 64-Bit Server VM; Oracle Corporation
+19:20:33,875[DaguCar-1-Thread] DEBUG bluetooth:328 - Use stack ClassLoader
+19:20:33,875[DaguCar-1-Thread] DEBUG bluetooth:471 - set dll dir C:\Users\guenter\AppData\Local\Temp\bluecove_guenter_0
+19:20:33,907[DaguCar-1-Thread] DEBUG bluetooth:371 - Library loaded from C:\Users\guenter\AppData\Local\Temp\bluecove_guenter_0\intelbth_x64.dll
+19:20:33,907[DaguCar-1-Thread] DEBUG bluetooth:? - nativeDebugCallback ON
+19:20:33,907[DaguCar-1-Thread] DEBUG bluetooth:480 - BluetoothStack detected 1
+19:20:33,907[DaguCar-1-Thread] DEBUG bluetooth:122 - initializationStatus 1
+19:20:33,907[DaguCar-1-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:20:33,907[DaguCar-2-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:20:33,907[DaguCar-1-Thread] DEBUG bluetooth:167 - connecting btspp://201304231621:1;authenticate=false;encrypt=false;master=false
+19:20:33,907[DaguCar-4-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:20:33,907[DaguCar-3-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:20:33,907[DaguCar-4-Thread] DEBUG bluetooth:167 - connecting btspp://001210240245:1;authenticate=false;encrypt=false;master=false
+19:20:33,907[DaguCar-2-Thread] DEBUG bluetooth:167 - connecting btspp://201304231670:1;authenticate=false;encrypt=false;master=false
+19:20:33,907[DaguCar-3-Thread] DEBUG bluetooth:167 - connecting btspp://201304231728:1;authenticate=false;encrypt=false;master=false
+19:20:33,922[DaguCar-3-Thread] DEBUG bluetooth:? - socket
+19:20:33,922[DaguCar-1-Thread] DEBUG bluetooth:? - socket
+19:20:33,922[DaguCar-4-Thread] DEBUG bluetooth:? - socket
+19:20:33,922[DaguCar-2-Thread] DEBUG bluetooth:? - socket
+19:20:33,922[DaguCar-4-Thread] DEBUG bluetooth:? - socket[936] opened
+19:20:33,922[DaguCar-1-Thread] DEBUG bluetooth:? - socket[924] opened
+19:20:33,922[DaguCar-3-Thread] DEBUG bluetooth:? - socket[920] opened
+19:20:33,922[DaguCar-2-Thread] DEBUG bluetooth:? - socket[948] opened
+19:20:33,922[ConnectThread-0] DEBUG bluetooth:? - socket[936] connect
+19:20:33,922[ConnectThread-3] DEBUG bluetooth:? - socket[948] connect
+19:20:33,922[ConnectThread-1] DEBUG bluetooth:? - socket[924] connect
+19:20:33,922[ConnectThread-2] DEBUG bluetooth:? - socket[920] connect
+19:20:39,174[ConnectThread-0] DEBUG bluetooth:? - will throw exception javax/bluetooth/BluetoothConnectionException(Connection timeout; [10060] Ein Verbindungsversuch ist fehlgeschlagen, da die Gegenstelle nach einer bestimmten Zeitspanne nicht richtig reagiert hat, oder die hergestellte Verbindung war fehlerhaft, da der verbundene Host nicht reagiert hat.)
+19:20:39,174[DaguCar-4-Thread] DEBUG bluetooth:? - socket[936] close
+19:20:44,314[ConnectThread-3] DEBUG bluetooth:? - will throw exception javax/bluetooth/BluetoothConnectionException(Connection timeout; [10060] Ein Verbindungsversuch ist fehlgeschlagen, da die Gegenstelle nach einer bestimmten Zeitspanne nicht richtig reagiert hat, oder die hergestellte Verbindung war fehlerhaft, da der verbundene Host nicht reagiert hat.)
+19:20:44,314[DaguCar-2-Thread] DEBUG bluetooth:? - socket[948] close
+19:20:44,314[DaguCar-2-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:20:44,314[DaguCar-2-Thread] DEBUG bluetooth:167 - connecting btspp://201304231670:1;authenticate=false;encrypt=false;master=false
+19:20:44,314[DaguCar-2-Thread] DEBUG bluetooth:? - socket
+19:20:44,314[DaguCar-2-Thread] DEBUG bluetooth:? - socket[948] opened
+19:20:44,314[ConnectThread-4] DEBUG bluetooth:? - socket[948] connect
+19:20:49,456[ConnectThread-1] DEBUG bluetooth:? - will throw exception javax/bluetooth/BluetoothConnectionException(Connection timeout; [10060] Ein Verbindungsversuch ist fehlgeschlagen, da die Gegenstelle nach einer bestimmten Zeitspanne nicht richtig reagiert hat, oder die hergestellte Verbindung war fehlerhaft, da der verbundene Host nicht reagiert hat.)
+19:20:49,456[DaguCar-1-Thread] DEBUG bluetooth:? - socket[924] close
+19:20:49,472[DaguCar-1-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:20:49,472[DaguCar-1-Thread] DEBUG bluetooth:167 - connecting btspp://201304231621:1;authenticate=false;encrypt=false;master=false
+19:20:49,472[DaguCar-1-Thread] DEBUG bluetooth:? - socket
+19:20:49,472[DaguCar-1-Thread] DEBUG bluetooth:? - socket[924] opened
+19:20:49,472[ConnectThread-5] DEBUG bluetooth:? - socket[924] connect
+19:20:54,598[ConnectThread-2] DEBUG bluetooth:? - will throw exception javax/bluetooth/BluetoothConnectionException(Connection timeout; [10060] Ein Verbindungsversuch ist fehlgeschlagen, da die Gegenstelle nach einer bestimmten Zeitspanne nicht richtig reagiert hat, oder die hergestellte Verbindung war fehlerhaft, da der verbundene Host nicht reagiert hat.)
+19:20:54,598[DaguCar-3-Thread] DEBUG bluetooth:? - socket[920] close
+19:20:54,598[DaguCar-3-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:20:54,598[DaguCar-3-Thread] DEBUG bluetooth:167 - connecting btspp://201304231728:1;authenticate=false;encrypt=false;master=false
+19:20:54,598[DaguCar-3-Thread] DEBUG bluetooth:? - socket
+19:20:54,598[DaguCar-3-Thread] DEBUG bluetooth:? - socket[920] opened
+19:20:54,598[ConnectThread-6] DEBUG bluetooth:? - socket[920] connect
+19:20:59,740[ConnectThread-4] DEBUG bluetooth:? - will throw exception javax/bluetooth/BluetoothConnectionException(Connection timeout; [10060] Ein Verbindungsversuch ist fehlgeschlagen, da die Gegenstelle nach einer bestimmten Zeitspanne nicht richtig reagiert hat, oder die hergestellte Verbindung war fehlerhaft, da der verbundene Host nicht reagiert hat.)
+19:20:59,740[DaguCar-2-Thread] DEBUG bluetooth:? - socket[948] close
+19:20:59,740[DaguCar-2-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:20:59,740[DaguCar-2-Thread] DEBUG bluetooth:167 - connecting btspp://201304231670:1;authenticate=false;encrypt=false;master=false
+19:20:59,740[DaguCar-2-Thread] DEBUG bluetooth:? - socket
+19:20:59,740[DaguCar-2-Thread] DEBUG bluetooth:? - socket[948] opened
+19:20:59,740[ConnectThread-7] DEBUG bluetooth:? - socket[948] connect
+19:21:04,866[ConnectThread-5] DEBUG bluetooth:? - will throw exception javax/bluetooth/BluetoothConnectionException(Connection timeout; [10060] Ein Verbindungsversuch ist fehlgeschlagen, da die Gegenstelle nach einer bestimmten Zeitspanne nicht richtig reagiert hat, oder die hergestellte Verbindung war fehlerhaft, da der verbundene Host nicht reagiert hat.)
+19:21:04,866[DaguCar-1-Thread] DEBUG bluetooth:? - socket[924] close
+19:21:04,866[DaguCar-1-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:21:04,866[DaguCar-1-Thread] DEBUG bluetooth:167 - connecting btspp://201304231621:1;authenticate=false;encrypt=false;master=false
+19:21:04,866[DaguCar-1-Thread] DEBUG bluetooth:? - socket
+19:21:04,866[DaguCar-1-Thread] DEBUG bluetooth:? - socket[924] opened
+19:21:04,866[ConnectThread-8] DEBUG bluetooth:? - socket[924] connect
+19:21:10,008[ConnectThread-6] DEBUG bluetooth:? - will throw exception javax/bluetooth/BluetoothConnectionException(Connection timeout; [10060] Ein Verbindungsversuch ist fehlgeschlagen, da die Gegenstelle nach einer bestimmten Zeitspanne nicht richtig reagiert hat, oder die hergestellte Verbindung war fehlerhaft, da der verbundene Host nicht reagiert hat.)
+19:21:10,008[DaguCar-3-Thread] DEBUG bluetooth:? - socket[920] close
+19:21:10,008[DaguCar-3-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:21:10,008[DaguCar-3-Thread] DEBUG bluetooth:167 - connecting btspp://201304231728:1;authenticate=false;encrypt=false;master=false
+19:21:10,008[DaguCar-3-Thread] DEBUG bluetooth:? - socket
+19:21:10,008[DaguCar-3-Thread] DEBUG bluetooth:? - socket[920] opened
+19:21:10,008[ConnectThread-9] DEBUG bluetooth:? - socket[920] connect
+19:21:15,150[ConnectThread-7] DEBUG bluetooth:? - will throw exception javax/bluetooth/BluetoothConnectionException(Connection timeout; [10060] Ein Verbindungsversuch ist fehlgeschlagen, da die Gegenstelle nach einer bestimmten Zeitspanne nicht richtig reagiert hat, oder die hergestellte Verbindung war fehlerhaft, da der verbundene Host nicht reagiert hat.)
+19:21:15,150[DaguCar-2-Thread] DEBUG bluetooth:? - socket[948] close
+19:21:15,150[DaguCar-2-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:21:15,150[DaguCar-2-Thread] DEBUG bluetooth:167 - connecting btspp://201304231670:1;authenticate=false;encrypt=false;master=false
+19:21:15,150[DaguCar-2-Thread] DEBUG bluetooth:? - socket
+19:21:15,150[DaguCar-2-Thread] DEBUG bluetooth:? - socket[948] opened
+19:21:15,150[ConnectThread-10] DEBUG bluetooth:? - socket[948] connect
+19:21:20,277[ConnectThread-8] DEBUG bluetooth:? - will throw exception javax/bluetooth/BluetoothConnectionException(Connection timeout; [10060] Ein Verbindungsversuch ist fehlgeschlagen, da die Gegenstelle nach einer bestimmten Zeitspanne nicht richtig reagiert hat, oder die hergestellte Verbindung war fehlerhaft, da der verbundene Host nicht reagiert hat.)
+19:21:20,277[DaguCar-1-Thread] DEBUG bluetooth:? - socket[924] close
+19:21:20,277[DaguCar-1-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:21:20,277[DaguCar-1-Thread] DEBUG bluetooth:167 - connecting btspp://201304231621:1;authenticate=false;encrypt=false;master=false
+19:21:20,277[DaguCar-1-Thread] DEBUG bluetooth:? - socket
+19:21:20,277[DaguCar-1-Thread] DEBUG bluetooth:? - socket[1004] opened
+19:21:20,277[ConnectThread-11] DEBUG bluetooth:? - socket[1004] connect
+19:21:25,419[ConnectThread-9] DEBUG bluetooth:? - will throw exception javax/bluetooth/BluetoothConnectionException(Connection timeout; [10060] Ein Verbindungsversuch ist fehlgeschlagen, da die Gegenstelle nach einer bestimmten Zeitspanne nicht richtig reagiert hat, oder die hergestellte Verbindung war fehlerhaft, da der verbundene Host nicht reagiert hat.)
+19:21:25,419[DaguCar-3-Thread] DEBUG bluetooth:? - socket[920] close
+19:21:25,419[DaguCar-3-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:21:25,419[DaguCar-3-Thread] DEBUG bluetooth:167 - connecting btspp://201304231728:1;authenticate=false;encrypt=false;master=false
+19:21:25,419[DaguCar-3-Thread] DEBUG bluetooth:? - socket
+19:21:25,419[DaguCar-3-Thread] DEBUG bluetooth:? - socket[1092] opened
+19:21:25,419[ConnectThread-12] DEBUG bluetooth:? - socket[1092] connect
+19:21:30,560[ConnectThread-10] DEBUG bluetooth:? - will throw exception javax/bluetooth/BluetoothConnectionException(Connection timeout; [10060] Ein Verbindungsversuch ist fehlgeschlagen, da die Gegenstelle nach einer bestimmten Zeitspanne nicht richtig reagiert hat, oder die hergestellte Verbindung war fehlerhaft, da der verbundene Host nicht reagiert hat.)
+19:21:30,560[DaguCar-2-Thread] DEBUG bluetooth:? - socket[948] close
+19:21:30,560[DaguCar-2-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:21:30,560[DaguCar-2-Thread] DEBUG bluetooth:167 - connecting btspp://201304231670:1;authenticate=false;encrypt=false;master=false
+19:21:30,560[DaguCar-2-Thread] DEBUG bluetooth:? - socket
+19:21:30,560[DaguCar-2-Thread] DEBUG bluetooth:? - socket[948] opened
+19:21:30,560[ConnectThread-13] DEBUG bluetooth:? - socket[948] connect
+19:21:35,687[ConnectThread-11] DEBUG bluetooth:? - will throw exception javax/bluetooth/BluetoothConnectionException(Connection timeout; [10060] Ein Verbindungsversuch ist fehlgeschlagen, da die Gegenstelle nach einer bestimmten Zeitspanne nicht richtig reagiert hat, oder die hergestellte Verbindung war fehlerhaft, da der verbundene Host nicht reagiert hat.)
+19:21:35,687[DaguCar-1-Thread] DEBUG bluetooth:? - socket[1004] close
+19:21:35,687[DaguCar-1-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:21:35,687[DaguCar-1-Thread] DEBUG bluetooth:167 - connecting btspp://201304231621:1;authenticate=false;encrypt=false;master=false
+19:21:35,687[DaguCar-1-Thread] DEBUG bluetooth:? - socket
+19:21:35,687[DaguCar-1-Thread] DEBUG bluetooth:? - socket[1004] opened
+19:21:35,687[ConnectThread-14] DEBUG bluetooth:? - socket[1004] connect
+19:21:38,875[DaguCar-1-Thread] DEBUG bluetooth:? - socket[1004] close
+19:21:38,875[DaguCar-2-Thread] DEBUG bluetooth:? - socket[948] close
+19:21:38,875[DaguCar-3-Thread] DEBUG bluetooth:? - socket[1092] close
+19:21:38,875[DaguCar-3-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:21:38,875[DaguCar-3-Thread] DEBUG bluetooth:167 - connecting btspp://201304231728:1;authenticate=false;encrypt=false;master=false
+19:21:38,875[DaguCar-1-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:21:38,875[DaguCar-1-Thread] DEBUG bluetooth:167 - connecting btspp://201304231621:1;authenticate=false;encrypt=false;master=false
+19:21:38,875[DaguCar-1-Thread] DEBUG bluetooth:? - socket
+19:21:38,875[DaguCar-1-Thread] DEBUG bluetooth:? - socket[928] opened
+19:21:38,875[DaguCar-3-Thread] DEBUG bluetooth:? - socket
+19:21:38,875[DaguCar-2-Thread] DEBUG bluetooth:82 - open using BlueCove javax.microedition.io.Connector
+19:21:38,875[ConnectThread-15] DEBUG bluetooth:? - socket[928] connect
+19:21:38,875[DaguCar-3-Thread] DEBUG bluetooth:? - socket[548] opened
+19:21:38,875[DaguCar-2-Thread] DEBUG bluetooth:167 - connecting btspp://201304231670:1;authenticate=false;encrypt=false;master=false
+19:21:38,875[ConnectThread-16] DEBUG bluetooth:? - socket[548] connect

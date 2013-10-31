@@ -13,29 +13,28 @@ public class TestAndroidWlanConnection {
 
 		RemoteControl remote = RemoteControl.remoteViaTcp;
 		try {
-			remote.activate("192.168.1.100");
-			remote.sendGoStraight();
-			remote.shutDown();
+
+			remote.sendGoStraight(2);
+			remote.releaseConnection();
 		} catch (IOException e) {
 			throw new AssertionError(e);
 		}
 
 	}
-	
+
 	@Test
 	public void testAllCommands() throws InterruptedException {
 		RemoteControl remote = RemoteControl.remoteViaTcp;
 		try {
-			remote.activate("192.168.1.100");
 			DirectionCommand[] directions=DirectionCommand.values();
 			SpeedCommand[] speeds=SpeedCommand.values();
 			int milliseconds = 3000;
 			for (DirectionCommand d:directions) {
 				for (SpeedCommand s:speeds) {
-					remote.sendSingleCommand(d, s, milliseconds);
+					remote.sendSingleCommand(2, d, s, milliseconds);
 				}
 			}
-			remote.shutDown();
+			remote.releaseConnection();
 		} catch (IOException e) {
 			throw new AssertionError(e);
 		}

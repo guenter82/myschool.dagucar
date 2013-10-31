@@ -8,8 +8,8 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 
 import org.myschool.dagucar.framework.command.CommandUtils;
-import org.myschool.dagucar.framework.remote.ConnectionProviderBluetooth;
 import org.myschool.dagucar.framework.remote.RemoteControl;
+import org.myschool.dagucar.framework.remote.old.ConnectionProviderBluetooth;
 
 public class OldTcpServer implements Runnable {
 

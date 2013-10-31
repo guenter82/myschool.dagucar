@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project org.myschool.dagucar.simulator.beginner with Jar-in-Jar Loader">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="D:/dagucar-zentrale.jar">
+            <manifest>
+                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+                <attribute name="Rsrc-Main-Class" value="org.myschool.dagucar.simulator.beginner.program.DaguCarSimulatorBeginner"/>
+                <attribute name="Class-Path" value="."/>
+                <attribute name="Rsrc-Class-Path" value="./ JGameGrid.jar rsyntaxtextarea.jar jfxrt.jar jgoodies-looks-2.5.3.jar jgoodies-common-1.6.0.jar junit.jar org.hamcrest.core_1.3.0.v201303031735.jar"/>
+            </manifest>
+            <zipfileset src="jar-in-jar-loader.zip"/>
+            <fileset dir="D:/git-hub/myschool.dagucar/org.myschool.dagucar.simulator.beginner/bin"/>
+            <zipfileset dir="D:\git-hub\myschool.dagucar\org.myschool.dagucar.simulator.beginner\lib\JGameGrid" includes="JGameGrid.jar"/>
+            <zipfileset dir="D:\git-hub\myschool.dagucar\org.myschool.dagucar.simulator.beginner\lib\RSyntaxTextArea" includes="rsyntaxtextarea.jar"/>
+            <zipfileset dir="D:\git-hub\myschool.dagucar\org.myschool.dagucar.simulator.beginner\lib" includes="jfxrt.jar"/>
+            <zipfileset dir="D:\git-hub\myschool.dagucar\org.myschool.dagucar.simulator.beginner\lib\JGoodiesLooks" includes="jgoodies-looks-2.5.3.jar"/>
+            <zipfileset dir="D:\git-hub\myschool.dagucar\org.myschool.dagucar.simulator.beginner\lib\JGoodiesCommon" includes="jgoodies-common-1.6.0.jar"/>
+            <zipfileset dir="D:\Programme\eclipse\eclipse-kepler\plugins\org.junit_4.11.0.v201303080030" includes="junit.jar"/>
+            <zipfileset dir="D:\Programme\eclipse\eclipse-kepler\plugins" includes="org.hamcrest.core_1.3.0.v201303031735.jar"/>
+        </jar>
+    </target>
+</project>

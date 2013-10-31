@@ -12,56 +12,62 @@ import javax.tools.ToolProvider;
 import org.myschool.dagucar.simulator.beginner.controller.SimContext;
 
 public class SimJavaCompiler implements Runnable {
-	
-	
+
+
 	public static final SimJavaCompiler javaCompiler= new SimJavaCompiler();
 
 	private SimContext context;
-	
+
 	private SimJavaCompiler() {
 	}
-	
+
 	public void setContext(SimContext context) {
 		this.context = context;
 	}
-	
+
 	@Override
 	public void run() {
-		assert context!=null;
-		if ( context.getSourcefile() == null) {
+		assert this.context!=null;
+		if ( this.context.getSourcefile() == null) {
 			System.out.println("No source file provided");
 			return;
 		}
-		
+
 		JavaCompiler compiler= ToolProvider.getSystemJavaCompiler();
+		//System.setProperty("java.home", "C:/Program Files/Java/jdk1.7.0_21");
+		compiler = ToolProvider.getSystemJavaCompiler();
+		if (compiler == null) {
+			throw new IllegalStateException("No compiler found. Copy tools.jar to the folder <JRE>/lib!");
+		}
 		DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<JavaFileObject>();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnosticCollector, SimContext.local, SimContext.charset);
-		Iterable<? extends JavaFileObject> filesToCompile=fileManager.getJavaFileObjects(context.getSourcefile());
+		Iterable<? extends JavaFileObject> filesToCompile=fileManager.getJavaFileObjects(this.context.getSourcefile());
 		CompilationTask compTask = compiler.getTask(null, fileManager, diagnosticCollector, null, null, filesToCompile);
+		compTask.setLocale(SimContext.local);
 		Boolean result = compTask.call();
-		
-		context.setMessages(diagnosticCollector.getDiagnostics());
-		
+
+		this.context.setMessages(diagnosticCollector.getDiagnostics());
+
 		if(result == true) {
 			System.out.println("Compilation was succeeded");
-			setClassFileToContext();
+			this.setClassFileToContext();
 		} else {
 			System.out.println("Compilation fails.");
 			this.context.setCompilerException();
 		}
 	}
-	
+
 	private void setClassFileToContext() {
-		String classpath = context.getSourcefile().getPath().replace(".java", ".class");
-		this.context.setClassname(context.getSourcefile().getName().replace(".java", ""));
+		String classpath = this.context.getSourcefile().getPath().replace(".java", ".class");
+		this.context.setClassname(this.context.getSourcefile().getName().replace(".java", ""));
 		this.context.setClassfile(new File(classpath));
-		
-		
+
+
 	}
 
-			
-		
+
+
 }
-	
-	
+
+
 

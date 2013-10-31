@@ -1,11 +1,8 @@
 package org.myschool.dagucar.framework.remote;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
 
 import org.myschool.dagucar.framework.command.DirectionCommand;
 import org.myschool.dagucar.framework.command.SpeedCommand;
-import org.myschool.dagucar.framework.program.ServerContext;
 
 /**
  * When the BluetoothSender is active the model car commandos are also send via bluetooth to the pysical
@@ -24,181 +21,106 @@ import org.myschool.dagucar.framework.program.ServerContext;
  * bluetooth device drivers and bluetooth stacks and is licences under the Apache Software Licence, Version 2.0. Problems occure in 64-bit systems - only Microsoft Bluetooth stack is supported,
  * so on Windows 64-Bit systems make sure your bluetooth device runs with a microsoft driver.
  *
- * Native libraies to support bluetooth stacks for Mac OS X, WIDCOMM, BlueSoleil and Microsoft Bluetooth are included.
+ * Native libraries to support bluetooth stacks for Mac OS X, WIDCOMM, BlueSoleil and Microsoft Bluetooth are included.
  *
  * @author Günter Öller
  * @version 1.0.1
  */
 public class RemoteControl {
-    private OutputStream os = null;
-    /* this factor can be increased if battery runs low or decreased if battery is really new*/
-    private double factor = 1.0;
-    private final ConnectionProvider connectionProvider;
+	/* this factor can be increased if battery runs low or decreased if battery is really new*/
+	private double factor = 1.0;
+	private final ConnectionProvider connectionProvider;
 
-    /**
-     * Singelton instance is used by all worlds"
-     */
-    public static final RemoteControl remoteViaBluetooth=new RemoteControl(new ConnectionProviderBluetooth());
-    /**
-     * Singelton instance is used by all worlds"
-     */
-    public static final RemoteControl remoteViaTcp=new RemoteControl(new ConnectionProviderTcpClient(8080));
+	/**
+	 * Singleton instance is used by all worlds"
+	 */
+	public static final RemoteControl remoteViaTcp=new RemoteControl(new ConnectionProviderTcpClient());
 
 
 
-    private RemoteControl(ConnectionProvider connectionProvider)  {
-    	this.connectionProvider = connectionProvider;
-    }
+	private RemoteControl(ConnectionProvider connectionProvider)  {
+		this.connectionProvider = connectionProvider;
+	}
 
-    /**
-     * Sends the 'go straight' commando to DaguCar. This commands is constructed by setting the DaguCar in differnt states.
-     * Eg: first we have to get moving, than we can hold a relative high speed and when we finally want to stop we have to stop the motors and
-     * wait while the car is roling along until the speed is gone to zero.
-     */
-    public void sendGoStraight() {
-        try {
-            if (!this.isActive()) return; //make sure the connection is active
-            this.sendNextState(DirectionCommand.NORTH,SpeedCommand.CRUISING, 2000); //speed up
-            this.sendNextState(DirectionCommand.NORTH,SpeedCommand.FAST, (int) (4000*factor)); //hold speed
-            this.sendNextState(DirectionCommand.NORTH,SpeedCommand.STOP, 400); //role along
-        } catch (Exception e) {
-            System.out.println("Could not send 'go straight' to DaguCar: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+	/**
+	 * Sends the 'go straight' commando to DaguCar. This commands is constructed by setting the DaguCar in differnt states.
+	 * Eg: first we have to get moving, than we can hold a relative high speed and when we finally want to stop we have to stop the motors and
+	 * wait while the car is roling along until the speed is gone to zero.
+	 * @param dagucarnumber TODO
+	 * @throws IOException
+	 */
+	public void sendGoStraight(int dagucarnumber) throws IOException {
+		this.sendNextState(dagucarnumber,DirectionCommand.NORTH, SpeedCommand.SLOW, 500); //speed up
+		this.sendNextState(dagucarnumber,DirectionCommand.NORTH, SpeedCommand.CRUISING, (int) (500*this.factor)); //hold speed
+		this.sendNextState(dagucarnumber,DirectionCommand.NORTH, SpeedCommand.STOP, 500); //role along
+	}
 
-    public void sendGoBack() {
-        try {
-            if (!this.isActive()) return; //make sure the connection is active
-            this.sendNextState(DirectionCommand.SOUTH,SpeedCommand.SLOW, 200); //speed up
-            this.sendNextState(DirectionCommand.SOUTH,SpeedCommand.CRUISING, (int) (400*factor)); //hold speed
-            this.sendNextState(DirectionCommand.SOUTH,SpeedCommand.STOP, 400); //role along
-        } catch (Exception e) {
-            System.out.println("Could not send 'go straight' to DaguCar: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+	public void sendGoBack() {
+		try {
+			this.sendNextState(2,DirectionCommand.SOUTH, SpeedCommand.SLOW, 200); //speed up
+			this.sendNextState(2,DirectionCommand.SOUTH, SpeedCommand.CRUISING, (int) (400*this.factor)); //hold speed
+			this.sendNextState(2,DirectionCommand.SOUTH, SpeedCommand.STOP, 400); //role along
+		} catch (Exception e) {
+			System.out.println("Could not send 'go straight' to DaguCar: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
 
-    public void sendGoFrontLeft() {
-        try {
-            if (!this.isActive()) return; //make sure the connection is active
-            this.sendNextState(DirectionCommand.NORTHWEST,SpeedCommand.STOP, 100);
-            this.sendNextState(DirectionCommand.NORTHWEST,SpeedCommand.MOVING_RIGHT_ALONG, 200); //speed up
-            this.sendNextState(DirectionCommand.NORTHWEST,SpeedCommand.MOVING_QUICK, (int) (400*factor)); //hold speed
-            this.sendNextState(DirectionCommand.NORTHWEST,SpeedCommand.STOP, 400); //role along
-            this.sendNextState(DirectionCommand.NORTH,SpeedCommand.STOP, 100);
-        } catch (Exception e) {
-            System.out.println("Could not send 'go front left ' to DaguCar: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+	public void sendGoFrontLeft() {
+		try {
+			this.sendNextState(2,DirectionCommand.NORTHWEST, SpeedCommand.STOP, 100);
+			this.sendNextState(2,DirectionCommand.NORTHWEST, SpeedCommand.MOVING_RIGHT_ALONG, 200); //speed up
+			this.sendNextState(2,DirectionCommand.NORTHWEST, SpeedCommand.MOVING_QUICK, (int) (400*this.factor)); //hold speed
+			this.sendNextState(2,DirectionCommand.NORTHWEST, SpeedCommand.STOP, 400); //role along
+			this.sendNextState(2,DirectionCommand.NORTH, SpeedCommand.STOP, 100);
+		} catch (Exception e) {
+			System.out.println("Could not send 'go front left ' to DaguCar: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
 
-    public void sendGoFrontRight() {
-        try {
-            if (!this.isActive()) return; //make sure the connection is active
-            this.sendNextState(DirectionCommand.NORTHEAST,SpeedCommand.STOP, 100);
-            this.sendNextState(DirectionCommand.NORTHEAST,SpeedCommand.MOVING_RIGHT_ALONG, 200); //speed up
-            this.sendNextState(DirectionCommand.NORTHEAST,SpeedCommand.MOVING_QUICK, (int) (400*factor)); //hold speed
-            this.sendNextState(DirectionCommand.NORTHEAST,SpeedCommand.STOP, 400); //role along
-            this.sendNextState(DirectionCommand.NORTH,SpeedCommand.STOP, 100);
-        } catch (Exception e) {
-            System.out.println("Could not send 'go front left ' to DaguCar: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-
-
-
-
-    /**
-     * Activates the bluetooth connection to the DaguCar. The DaguCar must be switched on and connection
-     * must be establishable.
-     * @throws IOException 
-     */
-
-	public void activate(String ip) throws IOException {
-		cacheConnection(ip);
+	public void sendGoFrontRight() {
+		try {
+			this.sendNextState(2,DirectionCommand.NORTHEAST, SpeedCommand.STOP, 100);
+			this.sendNextState(2,DirectionCommand.NORTHEAST, SpeedCommand.MOVING_RIGHT_ALONG, 200); //speed up
+			this.sendNextState(2,DirectionCommand.NORTHEAST, SpeedCommand.MOVING_QUICK, (int) (400*this.factor)); //hold speed
+			this.sendNextState(2,DirectionCommand.NORTHEAST, SpeedCommand.STOP, 400); //role along
+			this.sendNextState(2,DirectionCommand.NORTH, SpeedCommand.STOP, 100);
+		} catch (Exception e) {
+			System.out.println("Could not send 'go front left ' to DaguCar: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 
-    /**
-     * Returns if an active connection to the DaguCar is open.
-     */
-    public boolean isActive() {
-        return os!=null;
-    }
 
-    /**
-     * Shuts down the bluetooth connection to the DaguCar safely.
-     */
-    public void shutDown() throws IOException {
-        releaseConnection();
-    }
 
-    /* sends a command to the DaguCar. For possible commands see DirectionCommand and SpeedCommand enumerations and the
-     * technical documentation under http://dlnmh9ip6v2uc.cloudfront.net/datasheets/Robotics/DaguCarCommands.pdf.
-     */
-    private void sendNextState(DirectionCommand direction, SpeedCommand speed, int milliseconds) throws IOException {
-    	if (connectionProvider instanceof ConnectionProviderBluetooth) {
-    		sendNextStateBluetooth(direction, speed, milliseconds);
-    		return;
-    	}
-    	int dagucarNumber = 4;
-    	ByteBuffer buffer = ByteBuffer.allocate(9);
-    	buffer.put(ServerContext.firstHandshakeByte);
-    	buffer.put(ServerContext.secondHandshakeByte);
-    	buffer.put(ServerContext.handleCommandServiceByte);
-    	buffer.put((byte)dagucarNumber);
-    	buffer.put((byte)(direction.code + speed.code));
-    	byte[] bytes =buffer.putInt(milliseconds).array();
-    	os.write(bytes);
-        os.flush();
-    }
-    
-    private void sendNextStateBluetooth(DirectionCommand direction, SpeedCommand speed, int milliseconds) throws IOException {
-    	os.write((byte)(direction.code + speed.code));
-        os.flush();
-        try {
-			Thread.sleep(milliseconds);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+
+	/* sends a command to the DaguCar. For possible commands see DirectionCommand and SpeedCommand enumerations and the
+	 * technical documentation under http://dlnmh9ip6v2uc.cloudfront.net/datasheets/Robotics/DaguCarCommands.pdf.
+	 */
+	private void sendNextState(int dagucarnumber, DirectionCommand direction, SpeedCommand speed, int milliseconds) throws IOException {
+		this.connectionProvider.writeAndFlush(dagucarnumber, direction, speed, milliseconds);
+	}
+
+
+	/*
+	 * closes and releases connection object and output stream.
+	 */
+	public void releaseConnection() throws IOException {
+		if (this.connectionProvider!=null){
+			this.connectionProvider.closeConnection();
+		}
+	}
+
+	public void sendSingleCommand(int dagucarnumber, DirectionCommand direction, SpeedCommand speed, int milliseconds) {
+		try {
+			this.sendNextState(dagucarnumber ,direction, speed, milliseconds);
+		} catch (Exception e) {
+			System.out.println("Could not send 'go front left ' to DaguCar: " + e.getMessage());
 			e.printStackTrace();
 		}
-    }
-
-    /*
-     * creates a bluetoothconnection and opens an output stream to the service given bei this.serviceURL.
-     */
-    private void cacheConnection(String ip) throws IOException {
-        os = this.connectionProvider.openConnection(ip);
-    }
-
-    /*
-     * closes and releases connection object and output stream.
-     */
-    private void releaseConnection() throws IOException {
-        /*
-        * Close all resources
-        */
-        if (os!=null) {
-            os.close();
-            os=null;
-        }
-        if (connectionProvider!=null){
-        	connectionProvider.closeConnection(null);
-        }
-    }
-	
-	 public void sendSingleCommand(DirectionCommand direction, SpeedCommand speed, int milliseconds) {
-		 try {
-	            if (!this.isActive()) throw new IllegalStateException("Connection was not activated!"); //make sure the connection is active
-	            this.sendNextState(direction,speed, milliseconds);
-	        } catch (Exception e) {
-	            System.out.println("Could not send 'go front left ' to DaguCar: " + e.getMessage());
-	            e.printStackTrace();
-	        }
-	 }
+	}
 
 
 }

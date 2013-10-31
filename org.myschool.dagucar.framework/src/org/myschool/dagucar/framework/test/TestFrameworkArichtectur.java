@@ -18,46 +18,59 @@ public class TestFrameworkArichtectur {
 		StartDaguCarServer.main(new String[]{ServerContext.arg0});
 		Thread.sleep(5000); //time for tcp server
 	}
-	
 
-	@Test
+
+
 	public void testLocalTcpConnection() throws InterruptedException {
 		try {
-			remote.activate("127.0.0.1");
-			remote.sendGoStraight();
-			Thread.sleep(500 * 1000);
+			this.remote.sendGoStraight(4);
+			Thread.sleep(30 * 1000);
+			this.remote.releaseConnection();
 		} catch (IOException e) {
 			throw new AssertionError(e);
 		}
 	}
-	
-	
+
+	@Test
+	public void testAllDaguCarsTcpConnection() throws InterruptedException {
+		try {
+			for (int i=1; i<=3; i++) {
+				this.remote.sendGoStraight(i);
+			}
+			Thread.sleep(60 * 1000);
+			this.remote.releaseConnection();
+		} catch (IOException e) {
+			throw new AssertionError(e);
+		}
+	}
+
+
 	public void testAllCommands() throws InterruptedException {
 
 		try {
-			remote.activate("127.0.0.1");
+			//remote.activate("127.0.0.1");
 			DirectionCommand[] directions=DirectionCommand.values();
 			SpeedCommand[] speeds=SpeedCommand.values();
 			int milliseconds = 3000;
 			for (DirectionCommand d:directions) {
 				for (SpeedCommand s:speeds) {
-					remote.sendSingleCommand(d, s, milliseconds);
+					this.remote.sendSingleCommand(2, d, s, milliseconds);
 				}
 			}
-			remote.shutDown();
+			this.remote.releaseConnection();
 		} catch (IOException e) {
 			throw new AssertionError(e);
 		}
 	}
 
-	
+
 	public void testToRemoteIP() {
 
 		RemoteControl remote = RemoteControl.remoteViaTcp;
 		try {
-			remote.activate("10.63.208.218");
-			remote.sendGoStraight();
-			remote.shutDown();
+			//remote.activate("10.63.208.218");
+			remote.sendGoStraight(2);
+			remote.releaseConnection();
 		} catch (IOException e) {
 			throw new AssertionError(e);
 		}
