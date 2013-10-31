@@ -14,7 +14,6 @@
 			<attribute name="javadoc_location" value="http://javadoc.fifesoft.com/rsyntaxtextarea/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/jfxrt.jar"/>
 	<classpathentry kind="lib" path="lib/JGoodiesLooks/jgoodies-looks-2.5.3.jar" sourcepath="lib/JGoodiesLooks/jgoodies-looks-2.5.3-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/org.myschool.dagucar.simulator.beginner/lib/JGoodiesLooks/jgoodies-looks-2.5.3-javadoc.jar!/"/>

@@ -1,6 +1,6 @@
 package org.myschool.dagucar.simulator.beginner.spi;
 
-import com.sun.glass.events.KeyEvent;
+import java.awt.event.KeyEvent;
 
 public interface Tastatur {
 	char KEY_UP_CHAR = KeyEvent.VK_UP;
