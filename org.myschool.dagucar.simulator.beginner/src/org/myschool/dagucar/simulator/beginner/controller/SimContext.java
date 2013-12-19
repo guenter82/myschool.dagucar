@@ -141,18 +141,13 @@ public class SimContext {
 
 	public void log(String message) {
 		System.out.println(message);
-		if (this.window!=null) {
-			this.window.appendInfoLabel(message);
-		}
+
 	}
 
-	//seems to be error
+	//this message seems to be an error
 	public void log(String message, Throwable e) {
 		System.out.println(message);
 		e.printStackTrace();
-		if (this.window!=null) {
-			this.window.appendErrorLabel(message, e);
-		}
 	}
 
 
@@ -161,6 +156,9 @@ public class SimContext {
 	}
 
 	public String getStackTrace(Throwable aThrowable) {
+		if (aThrowable==null) {
+			return "";
+		}
 		Writer result = new StringWriter();
 		PrintWriter printWriter = new PrintWriter(result);
 		aThrowable.printStackTrace(printWriter);

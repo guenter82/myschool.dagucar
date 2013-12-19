@@ -21,18 +21,21 @@ public class DaguCarActorWrapper implements DaguCar {
 	}
 	@Override
 	public void fahreHalbeLinksKurve() {
+		this.context.log("Fahre halbe Linkskurve");
 		for (DaguCarActor actor:this.actors) {
 			actor.goTurnHalfLeft();
 		}
 	}
 	@Override
 	public void fahreHalbeRechtsKurve() {
+		this.context.log("Fahre halbe Rechtskurve");
 		for (DaguCarActor actor:this.actors) {
 			actor.goTurnHalfRight();
 		}
 	}
 	@Override
 	public void fahreZurueck() {
+		this.context.log("Fahre zurück");
 		for (DaguCarActor actor:this.actors) {
 			actor.goBack();
 		}

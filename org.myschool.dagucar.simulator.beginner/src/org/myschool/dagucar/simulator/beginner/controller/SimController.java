@@ -3,6 +3,7 @@ package org.myschool.dagucar.simulator.beginner.controller;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -19,50 +20,60 @@ import org.myschool.dagucar.simulator.beginner.editor.SimEditorMainWindow;
 import org.myschool.dagucar.simulator.beginner.spi.DaguCarSteuerung;
 
 public class SimController implements Runnable{
-	
+
 	private SimContext context = SimContext.context;
 	private SimJavaCompiler compiler = SimJavaCompiler.javaCompiler;
 	private DaguCarControllerWrapper actorController = SimContext.actorController;
-	
+
 
 	public SimController() {
 		SimContext.controller = this;
 	}
-	
+
 	@Override
 	public void run() {
-		startGUI();
+		this.startGUI();
 	}
-	
-	
+
+
 	/* Start all Swing applications on the EDT. */
 	private void startGUI() {
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
-					try {
-						new SimEditorMainWindow().setVisible(true);
-					} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-							| UnsupportedLookAndFeelException e) {
-						System.out.println("Konnte die DaguCar Steuerzentrale nicht starten: " + e.getMessage());
-						e.printStackTrace();
-					}
-				
+				try {
+					new SimEditorMainWindow().setVisible(true);
+					SimController.this.context.window.setPreferredSize(SimController.this.context.window.getSize());
+					//SimController.this.context.window.setResizable(false);
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+						| UnsupportedLookAndFeelException e) {
+					System.out.println("Konnte die DaguCar Steuerzentrale nicht starten: " + e.getMessage());
+					e.printStackTrace();
+				}
+
 			}
 		});
 	}
-	
+
 	public SimCompilationResult startAction() {
 		SimCompilationResult result = null;
 		try {
-			provideSourceFiles();
-			compileClass();
-			result = generateResult();
-			if (!context.isCompilerException()) {
-				DaguCarSteuerung robot = loadActorRoboter();
-				actorController.setActorSteuerung(robot);
-				actorController.run();
+			this.provideSourceFiles();
+			this.compileClass();
+			result = this.generateResult();
+			if (!this.context.isCompilerException()) {
+				DaguCarSteuerung robot = this.loadActorRoboter();
+				this.actorController.setActorSteuerung(robot);
+
+				PrintStream newout = new PrintStream(result.getOut());
+				PrintStream out=System.out;
+				System.setOut(newout);
+				this.actorController.run();
+				newout.flush();
+				System.setOut(out);
+
 			} else {
-				context.removeCompilerException();
+				this.context.removeCompilerException();
 			}
 		}
 		catch ( ClassNotFoundException | InstantiationException | IllegalAccessException e) {
@@ -78,14 +89,14 @@ public class SimController implements Runnable{
 	}
 
 	private DaguCarSteuerung loadActorRoboter() throws ClassNotFoundException,
-			InstantiationException, IllegalAccessException {
-		URLClassLoader classloader=createExtendedClassloader();
+	InstantiationException, IllegalAccessException {
+		URLClassLoader classloader=this.createExtendedClassloader();
 		@SuppressWarnings("unchecked")
-		Class<? extends DaguCarSteuerung> mycarClass = (Class<? extends DaguCarSteuerung>) classloader.loadClass(context.getClassname());
+		Class<? extends DaguCarSteuerung> mycarClass = (Class<? extends DaguCarSteuerung>) classloader.loadClass(this.context.getClassname());
 		DaguCarSteuerung robot=mycarClass.newInstance();
 		return robot;
 	}
-	
+
 	private URLClassLoader createExtendedClassloader() {
 		try {
 			URL[] urls = new URL[]{Paths.get(this.context.getDatahomegen()+"/").toUri().toURL()};
@@ -99,28 +110,28 @@ public class SimController implements Runnable{
 
 	private SimCompilationResult generateResult() {
 		SimCompilationResult result = new SimCompilationResult();
-		result.addAll(context.getMessages());
+		result.addAll(this.context.getMessages());
 		return result;
 	}
 
 	private void compileClass() {
-		compiler.setContext(context);
-		compiler.run();
+		this.compiler.setContext(this.context);
+		this.compiler.run();
 	}
 
 	private void provideSourceFiles() {
-		String starteMethod = context.getStarteMethodSource();
-		String code=DaguCarSteuerungTemplate.createSourceCode(starteMethod, "");
-		log(code);
+		String starteMethod = this.context.getStarteMethodSource();
+		String code=DaguCarSteuerungTemplate.createSourceCode(null, starteMethod, "");
+		this.log(code);
 		File file=null;
 		try {
-			createSourceFile(context.getDatahome()+"/"+SimContext.USER_FILE_STARTE, starteMethod);
-			file = createSourceFile(context.getDatahomegen()+"/"+SimContext.CLASS_NAME+".java", code);
+			this.createSourceFile(this.context.getDatahome()+"/"+SimContext.USER_FILE_STARTE, starteMethod);
+			file = this.createSourceFile(this.context.getDatahomegen()+"/"+SimContext.CLASS_NAME+".java", code);
 		} catch (IOException e) {
 			this.context.addError("Could not generate source file: " + SimContext.CLASS_NAME+".java", e);
 			throw new IllegalStateException("Could not generate source file: " + SimContext.CLASS_NAME+".java", e);
 		}
-		context.setSourcefile(file);
+		this.context.setSourcefile(file);
 	}
 
 	private File createSourceFile(String path, String code) throws IOException {
@@ -136,11 +147,11 @@ public class SimController implements Runnable{
 		System.out.println(code);
 	}
 
-	
 
 
 
 
-	
-	
+
+
+
 }

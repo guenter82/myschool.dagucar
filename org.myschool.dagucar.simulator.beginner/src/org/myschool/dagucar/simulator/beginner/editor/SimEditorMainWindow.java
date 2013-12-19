@@ -10,26 +10,37 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.net.URL;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 import javax.swing.JToolBar;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.myschool.dagucar.simulator.beginner.actor.sim.DefaultDaguCar;
+import org.myschool.dagucar.simulator.beginner.codetemplate.DaguCarSteuerungTemplate;
 import org.myschool.dagucar.simulator.beginner.compiler.SimCompilationResult;
 import org.myschool.dagucar.simulator.beginner.controller.SimContext;
 import org.myschool.dagucar.simulator.beginner.controller.SimController;
@@ -43,31 +54,63 @@ import com.jgoodies.looks.Options;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.theme.DesertGreen;
 
-;
-
 public class SimEditorMainWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
+	private ImageIcon expandIcon= this.createImageIcon("/image/toggle_expand16.png", "Expand");
 	private SimContext context = SimContext.context;
 	private SimController controller = SimContext.controller;
+
+	Color toolbarBackground= new Color(240,245,255);
+	Color buttonBackground = this.toolbarBackground;
+	Color hintsTextBackground = new Color(245,255,255);
+	Color debugTextBackground = new Color(245,255,255);
+
+	Border hintsBorder = BorderFactory.createBevelBorder(BevelBorder.LOWERED,new Color(250,253,255), new Color(160,160,190));
+	Border hintsPadding = new EmptyBorder(2, 4, 2, 2);
+	Border debugBorder = BorderFactory.createBevelBorder(BevelBorder.LOWERED,new Color(250,253,255), new Color(160,160,190));
+	Border debugPadding = new EmptyBorder(2, 4, 2, 2);
+
 	int cells=20;
 	int cellWidth=33;
+	int gameGridWidth = this.cells * this.cellWidth;
+	Dimension gridDim=new Dimension(this.gameGridWidth,this.gameGridWidth);
+
 	String icon_open = "folder_page_64px.png";
 	String icon_start ="control_play_blue_64px.png";
 	String icon_car_actor ="small_car_32px.png";
+	String icon_debug = "infocard_32px.png";
+
+	String starteComment="/* Hier kannst du deine Befehle für das DaguCar eingeben. */\r\n"
+			+ "auto.fahreVor();\r\n"
+			+ "\r\n";
+	String methodsComment="/* Hier kannst du zusätzliche Methoden angeben. zB: void fahreKreise(int anzahl) { ...} */";
 
 	JPanel debug=new JPanel();
-	RSyntaxTextArea textArea;
+	RSyntaxTextArea importText;
+	RSyntaxTextArea mainText;
+	RSyntaxTextArea methodText;
 	GameGrid gameGrid;
 	JToolBar toolbar;
 
 	ActionListener startAction=new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			SimEditorMainWindow.this.context.setStarteMethodSource(SimEditorMainWindow.this.textArea.getText());
+			SimEditorMainWindow.this.context.setStarteMethodSource(SimEditorMainWindow.this.mainText.getText());
+
 			SimCompilationResult result=SimEditorMainWindow.this.controller.startAction();
-			result.report();
+			SimEditorMainWindow.this.appendInfoLabel(result.getOut().toString());
+
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			PrintStream newout = new PrintStream(baos);
+			PrintStream out=System.out;
+			System.setOut(newout);
+
+			result.report(SimEditorMainWindow.this);
+			newout.flush();
+			System.setOut(out);
+			SimEditorMainWindow.this.appendErrorLabel(baos.toString(), null);
 		}
 	};
 
@@ -103,7 +146,7 @@ public class SimEditorMainWindow extends JFrame {
 			label.setForeground(c);
 		}
 		if (shortMessage==null) {
-			label.setText(message);
+			label.setText("<html>"+message.replace("\r\n", "<br/>")+"</html>");
 		} else {
 			label.setText(shortMessage);
 			label.setToolTipText(message);
@@ -116,15 +159,15 @@ public class SimEditorMainWindow extends JFrame {
 		if (message==null || message.length()==0) {
 			return null;
 		}
-		if (message.length() <= 80) {
+		if (message.length() <= 100) {
 			return null;
 		}
 		String firstLine=null;
 		int line=message.indexOf("\r\n");
 		if (line>-1) {
-			firstLine=message.substring(0, Math.max(line, 30));
+			firstLine=message.substring(0, Math.max(line, 50));
 		} else {
-			firstLine=message.substring(0, Math.max(message.length(), 30));
+			firstLine=message.substring(0, Math.max(message.length(), 50));
 		}
 		firstLine="<html>"+firstLine+" <b><font color=blue>...</font></b>";
 		return firstLine;
@@ -137,27 +180,16 @@ public class SimEditorMainWindow extends JFrame {
 		this.context.setWindow(this);
 		// Activates a special Look and Feel
 		this.activateLookAndFeel();
-		// Content Window
-		JPanel window=new JPanel(new BorderLayout());
-		// Toolbar
-		JToolBar toolbar = this.createToolBar();
-		// Text Editor
-		RTextScrollPane editorScrollPanel = this.createEditorPane();
-		// Game Grid
-		this.gameGrid = this.createGameGrid();
-		// Split pane holding editor and game grid
-		JSplitPane splitPane = this.createSplitPanel(editorScrollPanel, this.gameGrid);
-		// Organize the Components (Toolbar, Split Pane ... ) in the window
-		this.organizeComponentsInWindow(window, toolbar, splitPane);
-		// Configure the visualization of the window
-		this.configureMainWindow(window);
-		// Calculates Size of components; must be called before Actors are added
+		// Create visible components;
+		this.organizeComponentsInWindow();
+		// Expand to Fullscreen
+		this.setLocation(0, 0);
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		this.pack();
+		// Calculates Size of components; must be called before Actors are added
 		// Add Numbers
 		this.createColumnNumbers(this.gameGrid);
-		// Expand to Fullscreen
-		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-
+		//after layout work
 		this.populateSimulationWorld() ;
 	}
 
@@ -187,16 +219,32 @@ public class SimEditorMainWindow extends JFrame {
 	}
 
 
-
-	private void organizeComponentsInWindow(JPanel window, JToolBar toolbar,
-			JSplitPane splitPane) {
+	/*
+	 * Organize the Components (Toolbar, Split Pane with editor and game grid and debug bar ... ) in the window
+	 */
+	private void organizeComponentsInWindow() {
+		// Content Window
+		JPanel window=new JPanel(new BorderLayout());
+		// Toolbar
+		JToolBar toolbar = this.createToolBar();
+		// Text Editor
+		JComponent editorScrollPanel = this.createEditorPane();
+		// Game Grid
+		this.gameGrid = this.createGameGrid();
+		// Split pane holding editor and game grid
+		JComponent debugBar = this.createDebugBar();
+		JSplitPane splitPane = this.createSplitPanel(editorScrollPanel, this.gameGrid);
 		window.add(toolbar, BorderLayout.NORTH);
 		window.add(splitPane, BorderLayout.CENTER);
+		window.add(debugBar, BorderLayout.SOUTH);
+
+		// Configure the visualization of the window
+		this.configureMainWindow(window);
 	}
 
 
 
-	private JSplitPane createSplitPanel(RTextScrollPane editorScrollPanel,
+	private JSplitPane createSplitPanel(JComponent editorScrollPanel,
 			GameGrid gameGrid) {
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				editorScrollPanel, gameGrid);
@@ -212,6 +260,7 @@ public class SimEditorMainWindow extends JFrame {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		// Set default Window-Location to center
 		this.setLocationRelativeTo(null);
+		this.setIconImage(new ImageIcon(this.getClass().getResource("/image/dagucar32.png")).getImage());
 	}
 
 
@@ -242,7 +291,7 @@ public class SimEditorMainWindow extends JFrame {
 
 
 	private GameGrid createGameGrid() {
-		int gameGridWidth = 20 * 33;
+
 		GameGrid gameGrid = new GameGrid();
 		gameGrid.setNbHorzCells(this.cells);
 		gameGrid.setNbVertCells(this.cells);
@@ -250,25 +299,149 @@ public class SimEditorMainWindow extends JFrame {
 		gameGrid.setGridColor(Color.LIGHT_GRAY);
 		gameGrid.setBgColor(Color.white);
 		gameGrid.getPanel().setPaintColor(Color.gray);
-		Dimension dim=new Dimension(gameGridWidth,gameGridWidth);
-		gameGrid.setMinimumSize(dim);
-		gameGrid.setMaximumSize(dim);
+		gameGrid.setMinimumSize(this.gridDim);
+		gameGrid.setMaximumSize(this.gridDim);
 		return gameGrid;
 	}
 
 
 
-	private RTextScrollPane createEditorPane() {
-		this.textArea = new RSyntaxTextArea();
-		RTextScrollPane editorScrollPanel = new RTextScrollPane(this.textArea);
+	private JComponent createEditorPane() {
+
+		JPanel collapseablePretext = this.createEditorPretext();
+		this.mainText = new RSyntaxTextArea();
+		this.mainText.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
+		this.mainText.setCodeFoldingEnabled(false);
+		this.mainText.setAntiAliasingEnabled(true);
+		this.mainText.setAutoIndentEnabled(true);
+		this.mainText.setText(this.starteComment);
+		this.mainText.setFont(this.mainText.getFont().deriveFont((float) 18.0));
+		this.mainText.setBorder(new EmptyBorder(0, 25, 0, 0));
+
+		RTextScrollPane editorScrollPanel = new RTextScrollPane(this.mainText);
 		editorScrollPanel.setFoldIndicatorEnabled(true);
 		editorScrollPanel.getViewport().setBackground(Color.white);
-		this.textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
-		this.textArea.setCodeFoldingEnabled(false);
-		this.textArea.setAntiAliasingEnabled(true);
-		this.textArea.setAutoIndentEnabled(true);
-		editorScrollPanel.setMinimumSize( new Dimension(200, 0));
-		return editorScrollPanel;
+		editorScrollPanel.setMinimumSize(new Dimension(250, 18));
+
+		// upper panel with imports and class definition
+		JPanel topAndMiddle=new JPanel(new BorderLayout());
+		topAndMiddle.add(collapseablePretext, BorderLayout.NORTH);
+		topAndMiddle.add(editorScrollPanel, BorderLayout.CENTER);
+		topAndMiddle.setBorder(null);
+
+		JPanel endPanel = this.createdEditorPosttext();
+
+		JPanel allEditor = new JPanel(new BorderLayout());
+		allEditor.add(topAndMiddle, BorderLayout.CENTER);
+		allEditor.add(endPanel, BorderLayout.SOUTH);
+		allEditor.setBorder(null);
+		return allEditor;
+
+	}
+
+	private JPanel createEditorPretext() {
+		this.importText=new RSyntaxTextArea();
+		this.importText.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
+		this.importText.setCodeFoldingEnabled(false);
+		this.importText.setEnabled(false);
+		this.importText.setFocusable(false);
+		this.importText.setHighlightCurrentLine(false);
+		this.importText.setBackground(new Color(250, 250, 252));
+		this.importText.setText(DaguCarSteuerungTemplate.createImportsCode("")
+				+DaguCarSteuerungTemplate.createStartClassCode()
+				+"\r\n"+DaguCarSteuerungTemplate.createStarteMethodCode());
+		this.importText.setCaretPosition(0);
+		this.importText.setBorder(null);
+		this.importText.addMouseListener(Listeners.toggle);
+		this.importText.setVisible(false);
+		this.importText.setToolTipText("Klicke den Text an um die Java Klassendefinition auszublenden / einzublenden ...");
+
+
+
+
+		JLabel collapsedPretext= new JLabel("Java Klassendefinition: " + DaguCarSteuerungTemplate.createStartClassCode() + " ...",
+				this.expandIcon,
+				JLabel.LEFT);
+		collapsedPretext.setToolTipText("Klicke den Text an um die Java Klassendefinition einzublenden / auszublenden  ...");
+		collapsedPretext.setPreferredSize(new Dimension(250, 20));
+		collapsedPretext.addMouseListener(Listeners.toggle);
+
+
+		//collapsedPretext.addMouseListener(Listeners.toggle);
+
+		JPanel collapseablePretext=new JPanel(new BorderLayout());
+		collapseablePretext.add(collapsedPretext, BorderLayout.NORTH);
+		collapseablePretext.add(this.importText, BorderLayout.CENTER);
+		collapseablePretext.setName(Listeners.toggleParentName);
+		return collapseablePretext;
+	}
+
+	private JPanel createdEditorPosttext() {
+		RSyntaxTextArea endStartMethod=new RSyntaxTextArea();
+		endStartMethod.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
+		endStartMethod.setCodeFoldingEnabled(false);
+		endStartMethod.setEnabled(false);
+		endStartMethod.setFocusable(false);
+		endStartMethod.setHighlightCurrentLine(false);
+		endStartMethod.setBackground(new Color(250, 250, 252));
+		endStartMethod.setText(DaguCarSteuerungTemplate.createStarteMethodEndsCode());
+		endStartMethod.setCaretPosition(0);
+		endStartMethod.setMinimumSize(new Dimension(250, 18));
+		endStartMethod.setPreferredSize(new Dimension(250, 18));
+		endStartMethod.setBorder(null);
+		endStartMethod.addMouseListener(Listeners.toggle);
+
+		this.methodText=new RSyntaxTextArea();
+		this.methodText.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
+		this.methodText.setCodeFoldingEnabled(false);
+		this.methodText.setHighlightCurrentLine(false);
+		this.methodText.setText(this.methodsComment);
+		this.methodText.setCaretPosition(0);
+		this.methodText.setFont(this.methodText.getFont().deriveFont((float) 14.0));
+		this.methodText.setBorder(null);
+		this.methodText.addMouseListener(Listeners.toggle);
+
+		RTextScrollPane methodsScrollPanel = new RTextScrollPane(this.methodText);
+		methodsScrollPanel.setFoldIndicatorEnabled(true);
+		methodsScrollPanel.setLineNumbersEnabled(true);
+		methodsScrollPanel.setMinimumSize(new Dimension(250, 18));
+		methodsScrollPanel.setPreferredSize(new Dimension(250, 18*30));
+		methodsScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+		RSyntaxTextArea endClass=new RSyntaxTextArea();
+		endClass.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
+		endClass.setCodeFoldingEnabled(false);
+		endClass.setEnabled(false);
+		endClass.setFocusable(false);
+		endClass.setHighlightCurrentLine(false);
+		endClass.setBackground(new Color(250, 250, 252));
+		endClass.setText(DaguCarSteuerungTemplate.createClassEndsCode());
+		endClass.setCaretPosition(0);
+		endClass.setPreferredSize(new Dimension(1000, 18));
+		endClass.setBorder(null);
+		endClass.addMouseListener(Listeners.toggle);
+
+		JPanel endPanel = new JPanel();
+		endPanel.setLayout(new BoxLayout(endPanel, BoxLayout.Y_AXIS));
+		endPanel.add(endStartMethod);
+		endPanel.add(methodsScrollPanel);
+		endPanel.add(endClass);
+		endPanel.setBorder(null);
+		endPanel.setVisible(false);
+
+		JLabel collapsedPosttext= new JLabel("Java Methodendefinitionen: Hier kannst du zusätzliche Methoden definieren ...",
+				this.expandIcon,
+				JLabel.LEFT);
+		collapsedPosttext.setToolTipText("Klicke den Text an um die Java Methodendefinitionen einzublenden / auszublenden  ...");
+		collapsedPosttext.setPreferredSize(new Dimension(250, 20));
+		collapsedPosttext.addMouseListener(Listeners.toggle);
+
+		JPanel toggleablePosttext=new JPanel(new BorderLayout());
+		toggleablePosttext.add(collapsedPosttext, BorderLayout.NORTH);
+		toggleablePosttext.add(endPanel, BorderLayout.CENTER);
+		toggleablePosttext.setName(Listeners.toggleParentName);
+		return toggleablePosttext;
+
 	}
 
 
@@ -278,26 +451,107 @@ public class SimEditorMainWindow extends JFrame {
 		this.toolbar.putClientProperty(Options.HEADER_STYLE_KEY, HeaderStyle.SINGLE);
 		this.toolbar.setFloatable(false);
 		this.toolbar.setRollover(true);
-		this.toolbar.setBackground(Color.white);
+		this.toolbar.setBackground(this.toolbarBackground);
 
 		JLabel emptyLeft=new JLabel();
 		emptyLeft.setText("            ");
 		emptyLeft.setFocusable(false);
 		emptyLeft.setBackground(this.toolbar.getBackground());
 
+		JLabel empty2=new JLabel();
+		empty2.setText("            ");
+		empty2.setFocusable(false);
+		empty2.setBackground(this.toolbar.getBackground());
+
 		JButton start=this.makeButton(this.icon_start, "Übersetzen und Ausführen", "Übersetzen und Ausführen", "Los ...", this.startAction);
 
 		JButton open=this.makeButton(this.icon_open, "Öffne Datei", "Öffne Datei", "Los ...", null);
 
+		JLabel objectLabel = new JLabel("Objekte");
+		JComboBox<String> comboBox = new JComboBox<String>(new String[]{"auto", "tastatur", "this"});
 
+		JTextArea objectHelp = new JTextArea("Das DaguCar. Der Startzustand ist in der Simulation dargestellt. Du kannst folgende Befehle ausführen lassen, um den Zustand zu ändern.");
+		objectHelp.setPreferredSize(new Dimension(200, 60));
+		objectHelp.setWrapStyleWord(true);
+		objectHelp.setLineWrap(true);
+		objectHelp.setEditable(false);
+		objectHelp.setBorder(new EmptyBorder(20, 20, 5, 0));
+
+
+		JPanel wrapComboBox=new JPanel(new BorderLayout());
+		wrapComboBox.add(comboBox, BorderLayout.NORTH);
+
+		JPanel labelCombo =new JPanel(new BorderLayout());
+		labelCombo.add(objectLabel, BorderLayout.NORTH);
+		labelCombo.add(wrapComboBox, BorderLayout.CENTER);
+
+
+
+		JPanel labelComboAndHelp =new JPanel(new BorderLayout());
+		labelComboAndHelp.add(labelCombo, BorderLayout.WEST);
+		labelComboAndHelp.add(objectHelp, BorderLayout.CENTER);
+		labelComboAndHelp.setBorder(new EmptyBorder(0, 60, 0, 20));
+
+
+		JLabel commandLabel = new JLabel("Befehle");
+		JScrollPane hintScroller = this.createToolBarHints();
+
+		JPanel labelAndCommands=new JPanel(new BorderLayout());
+		labelAndCommands.add(commandLabel, BorderLayout.NORTH);
+		labelAndCommands.add(hintScroller, BorderLayout.CENTER);
+		labelAndCommands.setBorder(new EmptyBorder(0,0,5,0));
+
+		JTextArea commandHelp = new JTextArea("Das DaguCar Auto. Der Startzustand ist in der Simulation dargestellt. Du kannst folgende Befehle ausführen lassen, um den Zustand zu ändern.");
+		commandHelp.setPreferredSize(new Dimension(200, 80));
+		commandHelp.setWrapStyleWord(true);
+		commandHelp.setLineWrap(true);
+		commandHelp.setEditable(false);
+		commandHelp.setBorder(new EmptyBorder(20, 20, 5, 5));
+
+
+		//JComponent help = this.createToolBarTextSplit(hintScroller, debugScroller);
+
+		this.toolbar.add(emptyLeft);
+		this.toolbar.add(open);
+		this.toolbar.add(start);
+		this.toolbar.add(empty2);
+		this.toolbar.add(labelComboAndHelp);
+		this.toolbar.add(labelAndCommands);
+		this.toolbar.add(commandHelp);
+		return this.toolbar;
+	}
+
+
+	private JComponent createDebugBar() {
+		this.debug.setLayout(new BoxLayout(this.debug, BoxLayout.Y_AXIS));
+		this.debug.setBackground(this.debugTextBackground);
+		this.debug.setBorder(this.debugPadding);
+		JScrollPane debugScroller = new JScrollPane(this.debug, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		debugScroller.setBackground(null);
+		debugScroller.setBorder(this.debugBorder);
+
+		JLabel message=new JLabel("Meldungen:");
+
+		JPanel wrap = new JPanel(new BorderLayout());
+		wrap.add(message, BorderLayout.NORTH);
+
+		JPanel debugPanel = new JPanel(new BorderLayout());
+		debugPanel.setPreferredSize(new Dimension(this.getWidth(), 88));
+		debugPanel.add(wrap, BorderLayout.WEST);
+		debugPanel.add(debugScroller, BorderLayout.CENTER);
+		debugPanel.setBorder(new EmptyBorder(10, 10, 5, 100));
+
+
+		return debugPanel;
+	}
+
+	private JScrollPane createToolBarHints() {
 		JPanel allhints=new JPanel();
 		allhints.setLayout(new BoxLayout(allhints, BoxLayout.Y_AXIS));
 
-
 		JLabel hint1=new JLabel();
-
-		hint1.setText("<html><font color=grey>auto.</font><font color=blue>fahreVor</font>();</html>");
-		hint1.setToolTipText("Das DaguCar fährt einen Schritt nach vorne und stoppt.");
+		hint1.setText("<html><font color=blue>fahreVor</font>();</html>");
+		hint1.setToolTipText("Das DaguCar-Modellauto fährt einen Schritt nach vorne und stoppt.");
 		hint1.setEnabled(true);
 		hint1.setFocusable(true);
 		hint1.addMouseListener(new MouseAdapter() {
@@ -306,50 +560,34 @@ public class SimEditorMainWindow extends JFrame {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						SimEditorMainWindow.this.textArea.append("auto.fahreVor();\r\n");
+						SimEditorMainWindow.this.mainText.append("auto.fahreVor();\r\n");
 					}
 				});
 			}
 		});
 		JLabel hint2=new JLabel();
-		hint2.setText("<html><font color=grey>auto.</font><font color=blue>fahreHalbeLinksKurve</font>();</html>");
+		hint2.setText("<html>auto.<font color=blue>fahreHalbeLinksKurve</font>();</html>");
 		JLabel hint3=new JLabel();
-		hint3.setText("<html><font color=grey>auto.</font><font color=blue>fahreHalbeRechtsKurve</font>();</html>");
+		hint3.setText("<html>auto.<font color=blue>fahreHalbeRechtsKurve</font>();</html>");
 		JLabel hint4=new JLabel();
-		hint4.setText("<html><font color=grey>auto.</font><font color=blue>fahreZurueck</font>();</html>");
+		hint4.setText("<html>auto.<font color=blue>fahreZurueck</font>();</html>");
 		JLabel hint5=new JLabel();
-		hint5.setText("<html><font color=grey>auto.</font><font color=blue>fahreZurueck</font>();</html>");
+		hint5.setText("<html><font color=blue>if</font> (&lt;Wahr-Falsch-Ausdruck&gt;) { ... });</html>");
 
 		allhints.add(hint1);
 		allhints.add(hint2);
 		allhints.add(hint3);
 		allhints.add(hint4);
 		allhints.add(hint5);
-
-
+		allhints.setMaximumSize(new Dimension(250, 60));
+		allhints.setBackground(this.hintsTextBackground);
+		allhints.setBorder(this.hintsPadding);
 
 		JScrollPane hintScroller = new JScrollPane(allhints, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		hintScroller.setPreferredSize(new Dimension(250, 64));
-
-		this.debug.setLayout(new BoxLayout(this.debug, BoxLayout.Y_AXIS));
-		JScrollPane debugScroller = new JScrollPane(this.debug, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		debugScroller.setPreferredSize(new Dimension(400, 64));
-
-		JPanel help = new JPanel();
-		help.setLayout(new BorderLayout());
-		JSplitPane docs = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,hintScroller, debugScroller);
-		docs.setDividerLocation(250);
-		help.add(docs);
-
-		this.toolbar.add(emptyLeft);
-		this.toolbar.add(open);
-		this.toolbar.add(start);
-		this.toolbar.add(help);
-		//		Border b=toolbar.getBorder();
-		//		Insets i=b.getBorderInsets(toolbar);
-		//		i.set(5, 20, 5, 20);
-		//		toolbar.setBorderPainted(true);
-		return this.toolbar;
+		hintScroller.setMaximumSize(new Dimension(250, 60));
+		hintScroller.setPreferredSize(new Dimension(250, 60));
+		hintScroller.setBorder(this.hintsBorder);
+		return hintScroller;
 	}
 
 
@@ -364,15 +602,26 @@ public class SimEditorMainWindow extends JFrame {
 		button.setToolTipText(toolTipText);
 		button.addActionListener(buttonAction);
 		button.setMargin(new Insets(10, 10, 10, 10));
-		button.setBackground(Color.white);
-		URL imageURL = this.getClass().getResource(imgLocation);
+		button.setBackground(this.buttonBackground);
+		ImageIcon imageURL = this.createImageIcon(imgLocation, altText);
 		if (imageURL != null) { // image found
-			button.setIcon(new ImageIcon(imageURL, altText));
+			button.setIcon(imageURL);
 		} else { // no image found
 			button.setText(altText);
-			System.err.println("Resource not found: " + imgLocation);
 		}
 		button.setFocusable(false);
 		return button;
+	}
+
+	/** Returns an ImageIcon, or null if the path was invalid. */
+	private ImageIcon createImageIcon(String path,
+			String description) {
+		URL imgURL = this.getClass().getResource(path);
+		if (imgURL != null) {
+			return new ImageIcon(imgURL, description);
+		} else {
+			System.err.println("Resource not found: " + path);
+			return null;
+		}
 	}
 }

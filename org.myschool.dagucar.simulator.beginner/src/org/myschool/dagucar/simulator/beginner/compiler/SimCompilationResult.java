@@ -1,5 +1,6 @@
 package org.myschool.dagucar.simulator.beginner.compiler;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,37 +8,47 @@ import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
 import org.myschool.dagucar.simulator.beginner.controller.SimContext;
+import org.myschool.dagucar.simulator.beginner.editor.SimEditorMainWindow;
 
 public class SimCompilationResult {
 
 	private List<Diagnostic<? extends JavaFileObject>> compilerDiagnostic = new ArrayList<Diagnostic<? extends JavaFileObject>>();
-	
+
+	ByteArrayOutputStream out =  new ByteArrayOutputStream();
+
 	public boolean isSuccessful() {
-		return compilerDiagnostic.isEmpty();
+		return this.compilerDiagnostic.isEmpty();
 	}
 
 	public void setExecutionError(String string, ReflectiveOperationException e) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	public void addAll(List<Diagnostic<? extends JavaFileObject>> compilerDiagnostic) {
 		this.compilerDiagnostic.addAll(compilerDiagnostic);
 	}
-	
-	public void report() {
+
+	public void report(SimEditorMainWindow view) {
+		int prefixLines = 12;
 		for (Diagnostic<? extends JavaFileObject> diagnostic:this.compilerDiagnostic) {
-			System.out.println("Code->" +  diagnostic.getCode());
-			System.out.println("Column Number->" + diagnostic.getColumnNumber());
-			System.out.println("End Position->" + diagnostic.getEndPosition());
-			System.out.println("Kind->" + diagnostic.getKind());
-			System.out.println("Line Number->" + diagnostic.getLineNumber());
-			System.out.println("Message->"+ diagnostic.getMessage(SimContext.local));
-			System.out.println("Position->" + diagnostic.getPosition());
-			System.out.println("Source" + diagnostic.getSource());
-			System.out.println("Start Position->" + diagnostic.getStartPosition());
-			System.out.println("\n");
+			StringBuilder builder=new StringBuilder("Fehler im Quelltext: \r\n");
+			builder.append("Zeilennummer->" + (diagnostic.getLineNumber()-prefixLines) + " \r\n");
+			//builder.append("Code->" +  diagnostic.getCode() + "\r\n");
+			builder.append("Position in Zeile->" + diagnostic.getColumnNumber() + " \r\n");
+			//	builder.append("End-Position->" + diagnostic.getEndPosition() + " \r\n");
+			builder.append("Fehler-Art->" + diagnostic.getKind() + " \r\n");
+			builder.append("Fehlermeldung->"+ diagnostic.getMessage(SimContext.local) + " \r\n");
+			//	builder.append("Position->" + diagnostic.getPosition() + " \r\n");
+			//builder.append("Quelle" + diagnostic.getSource() + " \r\n");
+			//	builder.append("Start-Position->" + diagnostic.getStartPosition() + " \r\n");
+			builder.append("\n");
+			System.out.print(builder.toString());
 		}
+	}
+
+	public ByteArrayOutputStream getOut() {
+		return this.out;
 	}
 
 }
