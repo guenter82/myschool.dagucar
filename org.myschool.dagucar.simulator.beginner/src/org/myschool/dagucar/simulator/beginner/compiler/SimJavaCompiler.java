@@ -33,12 +33,14 @@ public class SimJavaCompiler implements Runnable {
 			return;
 		}
 
+
+		//-Dfile.encoding=UTF-8
+		//-Xbootclasspath/p:./lib/jdk-lib/tools.jar
 		JavaCompiler compiler= ToolProvider.getSystemJavaCompiler();
-		//System.setProperty("java.home", "C:/Program Files/Java/jdk1.7.0_21");
-		compiler = ToolProvider.getSystemJavaCompiler();
 		if (compiler == null) {
 			throw new IllegalStateException("No compiler found. Copy tools.jar to the folder <JRE>/lib!");
 		}
+		//System.setProperty("java.home",javaHome);
 		DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<JavaFileObject>();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnosticCollector, SimContext.local, SimContext.charset);
 		Iterable<? extends JavaFileObject> filesToCompile=fileManager.getJavaFileObjects(this.context.getSourcefile());

@@ -24,6 +24,7 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/org.myschool.dagucar.simulator.beginner/lib/JGoodiesCommon/jgoodies-common-1.6.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/JGameGrid/nextsim/NxtSim.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>

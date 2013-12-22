@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project org.myschool.dagucar.simulator.beginner with libraries in sub-folder">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="D:/git-hub/myschool.dagucar/org.myschool.dagucar.release/simulator.plugin/dagucar-plugin-v-003.jar">
+            <manifest>
+                <attribute name="Main-Class" value="org.myschool.dagucar.simulator.plugin.runner.RunPluginWindow"/>
+                <attribute name="Class-Path" value=". dagucar-plugin-v-003_lib/JGameGrid.jar dagucar-plugin-v-003_lib/rsyntaxtextarea.jar dagucar-plugin-v-003_lib/jgoodies-looks-2.5.3.jar dagucar-plugin-v-003_lib/jgoodies-common-1.6.0.jar dagucar-plugin-v-003_lib/NxtSim.jar dagucar-plugin-v-003_lib/junit.jar dagucar-plugin-v-003_lib/org.hamcrest.core_1.3.0.v201303031735.jar"/>
+            </manifest>
+            <fileset dir="D:/git-hub/myschool.dagucar/org.myschool.dagucar.simulator.beginner/bin"/>
+        </jar>
+        <delete dir="D:/git-hub/myschool.dagucar/org.myschool.dagucar.release/simulator.plugin/dagucar-plugin-v-003_lib"/>
+        <mkdir dir="D:/git-hub/myschool.dagucar/org.myschool.dagucar.release/simulator.plugin/dagucar-plugin-v-003_lib"/>
+        <copy file="D:/git-hub/myschool.dagucar/org.myschool.dagucar.simulator.beginner/lib/JGameGrid/JGameGrid.jar" todir="D:/git-hub/myschool.dagucar/org.myschool.dagucar.release/simulator.plugin/dagucar-plugin-v-003_lib"/>
+        <copy file="D:/git-hub/myschool.dagucar/org.myschool.dagucar.simulator.beginner/lib/RSyntaxTextArea/rsyntaxtextarea.jar" todir="D:/git-hub/myschool.dagucar/org.myschool.dagucar.release/simulator.plugin/dagucar-plugin-v-003_lib"/>
+        <copy file="D:/git-hub/myschool.dagucar/org.myschool.dagucar.simulator.beginner/lib/JGoodiesLooks/jgoodies-looks-2.5.3.jar" todir="D:/git-hub/myschool.dagucar/org.myschool.dagucar.release/simulator.plugin/dagucar-plugin-v-003_lib"/>
+        <copy file="D:/git-hub/myschool.dagucar/org.myschool.dagucar.simulator.beginner/lib/JGoodiesCommon/jgoodies-common-1.6.0.jar" todir="D:/git-hub/myschool.dagucar/org.myschool.dagucar.release/simulator.plugin/dagucar-plugin-v-003_lib"/>
+        <copy file="D:/git-hub/myschool.dagucar/org.myschool.dagucar.simulator.beginner/lib/JGameGrid/nextsim/NxtSim.jar" todir="D:/git-hub/myschool.dagucar/org.myschool.dagucar.release/simulator.plugin/dagucar-plugin-v-003_lib"/>
+        <copy file="D:/Programme/eclipse/eclipse-kepler/plugins/org.junit_4.11.0.v201303080030/junit.jar" todir="D:/git-hub/myschool.dagucar/org.myschool.dagucar.release/simulator.plugin/dagucar-plugin-v-003_lib"/>
+        <copy file="D:/Programme/eclipse/eclipse-kepler/plugins/org.hamcrest.core_1.3.0.v201303031735.jar" todir="D:/git-hub/myschool.dagucar/org.myschool.dagucar.release/simulator.plugin/dagucar-plugin-v-003_lib"/>
+    </target>
+</project>

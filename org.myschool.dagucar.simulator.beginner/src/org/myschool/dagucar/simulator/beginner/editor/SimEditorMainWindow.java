@@ -8,25 +8,26 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
@@ -44,6 +45,7 @@ import org.myschool.dagucar.simulator.beginner.codetemplate.DaguCarSteuerungTemp
 import org.myschool.dagucar.simulator.beginner.compiler.SimCompilationResult;
 import org.myschool.dagucar.simulator.beginner.controller.SimContext;
 import org.myschool.dagucar.simulator.beginner.controller.SimController;
+import org.myschool.dagucar.simulator.beginner.editor.help.HelpObject;
 
 import ch.aplu.jgamegrid.GameGrid;
 import ch.aplu.jgamegrid.Location;
@@ -93,6 +95,10 @@ public class SimEditorMainWindow extends JFrame {
 	RSyntaxTextArea methodText;
 	GameGrid gameGrid;
 	JToolBar toolbar;
+	JList methodList;
+	JComboBox<HelpObject> comboBox;
+	JTextArea methodHelp;
+	JTextArea objectHelp;
 
 	ActionListener startAction=new ActionListener() {
 		@Override
@@ -200,7 +206,7 @@ public class SimEditorMainWindow extends JFrame {
 		if (imageURL == null) { // image found
 			throw new IllegalArgumentException("Resource not found: " + imageURL);
 		}
-		DefaultDaguCar car = new DefaultDaguCar(true, imageURL.getPath());
+		DefaultDaguCar car = new DefaultDaguCar(true, null);
 
 		this.context.setSimDaguCarActor(car);
 		this.gameGrid.addActor(car, new Location(1,1));
@@ -467,19 +473,22 @@ public class SimEditorMainWindow extends JFrame {
 
 		JButton open=this.makeButton(this.icon_open, "Öffne Datei", "Öffne Datei", "Los ...", null);
 
-		JLabel objectLabel = new JLabel("Objekte");
-		JComboBox<String> comboBox = new JComboBox<String>(new String[]{"auto", "tastatur", "this"});
 
-		JTextArea objectHelp = new JTextArea("Das DaguCar. Der Startzustand ist in der Simulation dargestellt. Du kannst folgende Befehle ausführen lassen, um den Zustand zu ändern.");
-		objectHelp.setPreferredSize(new Dimension(200, 60));
-		objectHelp.setWrapStyleWord(true);
-		objectHelp.setLineWrap(true);
-		objectHelp.setEditable(false);
-		objectHelp.setBorder(new EmptyBorder(20, 20, 5, 0));
+		this.objectHelp = new JTextArea("Das DaguCar. Der Startzustand ist in der Simulation dargestellt. Du kannst folgende Befehle ausführen lassen, um den Zustand zu ändern.");
+		this.objectHelp.setPreferredSize(new Dimension(150, 60));
+		this.objectHelp.setWrapStyleWord(true);
+		this.objectHelp.setLineWrap(true);
+		this.objectHelp.setEditable(false);
+		this.objectHelp.setBorder(new EmptyBorder(20, 20, 5, 0));
+
+		JLabel objectLabel = new JLabel("Objekte");
+		this.comboBox = new JComboBox<HelpObject>(HelpObject.values());
+		this.comboBox.addActionListener(Listeners.objectSelectionListener);
+		this.comboBox.setSelectedIndex(0);
 
 
 		JPanel wrapComboBox=new JPanel(new BorderLayout());
-		wrapComboBox.add(comboBox, BorderLayout.NORTH);
+		wrapComboBox.add(this.comboBox, BorderLayout.NORTH);
 
 		JPanel labelCombo =new JPanel(new BorderLayout());
 		labelCombo.add(objectLabel, BorderLayout.NORTH);
@@ -489,24 +498,26 @@ public class SimEditorMainWindow extends JFrame {
 
 		JPanel labelComboAndHelp =new JPanel(new BorderLayout());
 		labelComboAndHelp.add(labelCombo, BorderLayout.WEST);
-		labelComboAndHelp.add(objectHelp, BorderLayout.CENTER);
+		labelComboAndHelp.add(this.objectHelp, BorderLayout.CENTER);
 		labelComboAndHelp.setBorder(new EmptyBorder(0, 60, 0, 20));
 
 
-		JLabel commandLabel = new JLabel("Befehle");
-		JScrollPane hintScroller = this.createToolBarHints();
+		this.methodHelp = new JTextArea();
+		this.methodHelp.setPreferredSize(new Dimension(300, 80));
+		this.methodHelp.setWrapStyleWord(true);
+		this.methodHelp.setLineWrap(true);
+		this.methodHelp.setEditable(false);
+		this.methodHelp.setBorder(new EmptyBorder(20, 20, 5, 5));
+
+		JLabel commandLabel = new JLabel("Befehle:");
+		JScrollPane hintScroller = this.createToolBarMethod();
 
 		JPanel labelAndCommands=new JPanel(new BorderLayout());
 		labelAndCommands.add(commandLabel, BorderLayout.NORTH);
 		labelAndCommands.add(hintScroller, BorderLayout.CENTER);
 		labelAndCommands.setBorder(new EmptyBorder(0,0,5,0));
 
-		JTextArea commandHelp = new JTextArea("Das DaguCar Auto. Der Startzustand ist in der Simulation dargestellt. Du kannst folgende Befehle ausführen lassen, um den Zustand zu ändern.");
-		commandHelp.setPreferredSize(new Dimension(200, 80));
-		commandHelp.setWrapStyleWord(true);
-		commandHelp.setLineWrap(true);
-		commandHelp.setEditable(false);
-		commandHelp.setBorder(new EmptyBorder(20, 20, 5, 5));
+
 
 
 		//JComponent help = this.createToolBarTextSplit(hintScroller, debugScroller);
@@ -517,7 +528,7 @@ public class SimEditorMainWindow extends JFrame {
 		this.toolbar.add(empty2);
 		this.toolbar.add(labelComboAndHelp);
 		this.toolbar.add(labelAndCommands);
-		this.toolbar.add(commandHelp);
+		this.toolbar.add(this.methodHelp);
 		return this.toolbar;
 	}
 
@@ -545,49 +556,28 @@ public class SimEditorMainWindow extends JFrame {
 		return debugPanel;
 	}
 
-	private JScrollPane createToolBarHints() {
-		JPanel allhints=new JPanel();
-		allhints.setLayout(new BoxLayout(allhints, BoxLayout.Y_AXIS));
+	private JScrollPane createToolBarMethod() {
 
-		JLabel hint1=new JLabel();
-		hint1.setText("<html><font color=blue>fahreVor</font>();</html>");
-		hint1.setToolTipText("Das DaguCar-Modellauto fährt einen Schritt nach vorne und stoppt.");
-		hint1.setEnabled(true);
-		hint1.setFocusable(true);
-		hint1.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						SimEditorMainWindow.this.mainText.append("auto.fahreVor();\r\n");
-					}
-				});
-			}
-		});
-		JLabel hint2=new JLabel();
-		hint2.setText("<html>auto.<font color=blue>fahreHalbeLinksKurve</font>();</html>");
-		JLabel hint3=new JLabel();
-		hint3.setText("<html>auto.<font color=blue>fahreHalbeRechtsKurve</font>();</html>");
-		JLabel hint4=new JLabel();
-		hint4.setText("<html>auto.<font color=blue>fahreZurueck</font>();</html>");
-		JLabel hint5=new JLabel();
-		hint5.setText("<html><font color=blue>if</font> (&lt;Wahr-Falsch-Ausdruck&gt;) { ... });</html>");
+		DefaultListModel<String> listModel = new DefaultListModel<String>();
+		for (String method:HelpObject.car.getMethods()) {
+			listModel.addElement("<html>"+HelpObject.car.toString()+".<font color=blue>"+method+"</font>();</html>");
+		}
+		this.methodHelp.setText(HelpObject.car.getMethodHelp(HelpObject.car.getMethods()[0]));
 
-		allhints.add(hint1);
-		allhints.add(hint2);
-		allhints.add(hint3);
-		allhints.add(hint4);
-		allhints.add(hint5);
-		allhints.setMaximumSize(new Dimension(250, 60));
-		allhints.setBackground(this.hintsTextBackground);
-		allhints.setBorder(this.hintsPadding);
+		this.methodList = new JList<String>(listModel);
+		this.methodList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		this.methodList.setVisibleRowCount(-1);
+		this.methodList.setBackground(this.hintsTextBackground);
+		this.methodList.setBorder(this.hintsPadding);
+		this.methodList.setSelectedIndex(0);
+		this.methodList.addMouseListener(Listeners.autoFillMouseListener);
+		this.methodList.addListSelectionListener(Listeners.methodsSelectionListener);
 
-		JScrollPane hintScroller = new JScrollPane(allhints, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		hintScroller.setMaximumSize(new Dimension(250, 60));
-		hintScroller.setPreferredSize(new Dimension(250, 60));
-		hintScroller.setBorder(this.hintsBorder);
-		return hintScroller;
+		JScrollPane methodListScroller = new JScrollPane(this.methodList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		methodListScroller.setMaximumSize(new Dimension(150, 60));
+		methodListScroller.setPreferredSize(new Dimension(150, 60));
+		methodListScroller.setBorder(this.hintsBorder);
+		return methodListScroller;
 	}
 
 

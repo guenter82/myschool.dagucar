@@ -164,4 +164,10 @@ public class SimContext {
 		aThrowable.printStackTrace(printWriter);
 		return result.toString();
 	}
+
+
+	public void setPluginWindow(Object simEditorMainWindow) {
+		// TODO Auto-generated method stub
+
+	}
 }

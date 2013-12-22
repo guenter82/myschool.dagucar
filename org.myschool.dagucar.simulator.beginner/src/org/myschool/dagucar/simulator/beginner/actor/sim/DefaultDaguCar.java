@@ -1,15 +1,17 @@
 package org.myschool.dagucar.simulator.beginner.actor.sim;
 
+import java.awt.image.BufferedImage;
+
 import org.myschool.dagucar.simulator.beginner.actor.DaguCarActor;
 
 import ch.aplu.jgamegrid.Actor;
 
 public class DefaultDaguCar extends Actor implements DaguCarActor{
 
-	public DefaultDaguCar(boolean isRotatable, String... filenames) {
-		super(isRotatable, filenames);
+	public DefaultDaguCar(boolean isRotatable, BufferedImage image) {
+		super(isRotatable, image);
 	}
-	
+
 	@Override
 	public void goAhead() {
 		this.move(1);

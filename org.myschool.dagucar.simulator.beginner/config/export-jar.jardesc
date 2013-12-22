@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="org.myschool.dagucar.release/simulator.plugin/dagucar-plugin-v-001.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/org.myschool.dagucar.simulator.beginner/config/export-jar.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="true" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" mainClassHandleIdentifier="=org.myschool.dagucar.simulator.beginner/src&lt;org.myschool.dagucar.simulator.plugin.runner{RunPluginWindow.java[RunPluginWindow" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=org.myschool.dagucar.simulator.beginner/resource"/>
+        <javaElement handleIdentifier="=org.myschool.dagucar.simulator.beginner/src-test"/>
+        <folder path="/org.myschool.dagucar.simulator.beginner/lib"/>
+        <javaElement handleIdentifier="=org.myschool.dagucar.simulator.beginner/src"/>
+        <javaElement handleIdentifier="=org.myschool.dagucar.simulator.beginner/config"/>
+    </selectedElements>
+</jardesc>
