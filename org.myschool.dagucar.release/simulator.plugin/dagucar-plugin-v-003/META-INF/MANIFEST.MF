@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.8.4
+Created-By: 1.7.0_45-b18 (Oracle Corporation)
+Main-Class: org.myschool.dagucar.simulator.plugin.runner.RunPluginWind
+ ow
+Class-Path: . dagucar-plugin-v-003_lib/JGameGrid.jar dagucar-plugin-v-
+ 003_lib/rsyntaxtextarea.jar dagucar-plugin-v-003_lib/jgoodies-looks-2
+ .5.3.jar dagucar-plugin-v-003_lib/jgoodies-common-1.6.0.jar dagucar-p
+ lugin-v-003_lib/NxtSim.jar dagucar-plugin-v-003_lib/junit.jar dagucar
+ -plugin-v-003_lib/org.hamcrest.core_1.3.0.v201303031735.jar
+

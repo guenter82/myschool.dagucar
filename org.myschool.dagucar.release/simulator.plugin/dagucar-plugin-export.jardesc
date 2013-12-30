@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
-    <jar path="org.myschool.dagucar.release/simulator.plugin/dagucar-plugin-v-004.jar"/>
-    <options buildIfNeeded="true" compress="true" descriptionLocation="/org.myschool.dagucar.simulator.beginner/config/export-jar.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="true" useSourceFolders="false"/>
+    <jar path="D:/Dropbox/DA/tigerpython/Lib/dagucar-plugin-v-005.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/org.myschool.dagucar.release/simulator.plugin/dagucar-plugin-export.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
     <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
