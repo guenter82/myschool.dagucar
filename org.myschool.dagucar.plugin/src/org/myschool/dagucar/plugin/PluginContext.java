@@ -1,6 +1,5 @@
 package org.myschool.dagucar.plugin;
 
-import java.awt.event.KeyEvent;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -24,7 +23,7 @@ public class PluginContext {
 	public DaguCarActor actor;
 	public DaguCarRemote remote;
 	public DaguCar dagucar;
-	public final LinkedBlockingQueue<KeyEvent> keys= new LinkedBlockingQueue<KeyEvent>();
+	public final LinkedBlockingQueue<Character> keys= new LinkedBlockingQueue<Character>();
 
 	public void closeContext() {
 		if (PluginContext.gamegrid!=null) {

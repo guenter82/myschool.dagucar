@@ -37,8 +37,8 @@ public class Listeners {
 			if (e.getID() != KeyEvent.KEY_TYPED) {
 				return false;
 			}
-			System.out.println("Key " + e.getKeyChar());
-			PluginContext.executedContext.keys.add(e);
+			//System.out.println("Key " + e.getKeyChar());
+			PluginContext.executedContext.keys.add(e.getKeyChar());
 			return false;
 		}
 	};

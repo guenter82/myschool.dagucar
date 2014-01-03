@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -18,9 +20,19 @@ import ch.aplu.jgamegrid.GGMouse;
 import ch.aplu.jgamegrid.Location;
 
 public enum Level {
-	level0("Aufgabe 0",new Location(1,9), 0, new Location(1,7), 180),
-	level1("Aufgabe 1", new Location(1,9), 0, new Location(1,7), 180),
-	level2("Aufgabe 2", new Location(1,9), 0, new Location(14,12), 270)
+	level0("Aufgabe 0 - Gerade aus",new Location(1,9), 0, new Location(11,9), 0),
+	level1("Aufgabe 1 - Hindernis", new Location(1,9), 0, new Location(18,9), 0),
+	level2("Aufgabe 2 - Wenden",new Location(1,9), 0, new Location(4,9), 180),
+	level3("Aufgabe 3 - Hindernis und wenden", new Location(1,9), 0, new Location(18,9), 180),
+	level4("Aufgabe 4 - Einparken", new Location(1,9), 0, new Location(14,12), 270),
+	level5("Aufgabe 5 - Labyrinth", new Location(1,1), 0, new Location(19,19), 0),
+	level6("Aufgabe 6 - Labyrinth rückwärts", new Location(19,19), 0, new Location(1,1), 0),
+	level7("Aufgabe 7 - Textausgabe", new Location(1,9), 0, new Location(1,9), 0),
+	level8("Aufgabe 8 - Einparken mit Tasten", new Location(1,9), 0, new Location(14,12), 270),
+	//TODO
+	levelx("Aufgabe x", new Location(1,9), 0, new Location(14,12), 270),
+	levely("Aufgabe y", new Location(1,9), 0, new Location(14,12), 270)
+
 	;
 
 	private final static String icon_car_actor ="dagucar-actor48.png";
@@ -46,10 +58,10 @@ public enum Level {
 		this.endLocation = endLocation;
 		this.endDirection = endDirection;
 		switch (this.ordinal()) {
-		case 0:
+		case 0: //straight
 			this.wallLocations = new Location[]{ };
 			break;
-		case 1:
+		case 1: //other side
 			this.wallLocations = new Location[] {
 					new Location(12,6),
 					new Location(12,7),
@@ -59,7 +71,98 @@ public enum Level {
 					new Location(12,11),
 					new Location(12,12)};
 			break;
-		case 2:
+		case 2: //turn around
+			this.wallLocations = new Location[] {
+					new Location(0,8),
+					new Location(0,10),
+					new Location(0,9),
+					new Location(1,8),
+					new Location(2,8),
+					new Location(1,10),
+					new Location(2,10),
+					new Location(2,7),
+					new Location(2,11),
+					new Location(2,6),
+					new Location(2,12),
+					new Location(3,6),
+					new Location(3,12),
+					new Location(4,6),
+					new Location(4,12),
+					new Location(5,6),
+					new Location(5,12),
+					new Location(6,6),
+					new Location(6,12),
+					new Location(7,6),
+					new Location(7,12),
+					new Location(8,6),
+					new Location(8,7),
+					new Location(8,8),
+					new Location(8,9),
+					new Location(8,10),
+					new Location(8,11),
+					new Location(8,12),
+			};
+			break;
+		case 3: //other side and turn around
+			this.wallLocations = new Location[] {
+					new Location(12,6),
+					new Location(12,7),
+					new Location(12,8),
+					new Location(12,9),
+					new Location(12,10),
+					new Location(12,11),
+					new Location(12,12)};
+			break;
+		case 4: // parking
+			this.wallLocations = new Location[] {
+					new Location(4,9),
+					new Location(5,9),
+					new Location(6,9),
+					new Location(13,10),
+					new Location(13,11),
+					new Location(13,12),
+					new Location(13,13),
+					new Location(13,14),
+					new Location(15,10),
+					new Location(15,11),
+					new Location(15,12),
+					new Location(15,13),
+					new Location(15,14),
+					new Location(14,14)
+			};
+			break;
+		case 5: //labyrinth
+			List<Location> locs=new ArrayList<Location>();
+			for (int i=1; i<20; i++) {
+				for (int j=2; j<19; j++) {
+					boolean linewalls = (j-1) % 3 != 0 && (i >= 4 && i <= 16);
+					boolean frontcolumnwall = i < 4 && (j == 2 || j == 3 || j == 9 ||  j==15);
+					boolean lastcolumnwall = i > 16  && ( j == 6 ||  j == 12 || j==18);
+					if (frontcolumnwall || lastcolumnwall || linewalls) {
+						locs.add(new Location(i, j));
+					}
+				}
+			}
+			this.wallLocations = locs.toArray(new Location[0]);
+			break;
+		case 6: //labyrinth back
+			locs=new ArrayList<Location>();
+			for (int i=1; i<20; i++) {
+				for (int j=2; j<19; j++) {
+					boolean linewalls = (j-1) % 3 != 0 && (i >= 4 && i <= 16);
+					boolean frontcolumnwall = i < 4 && (j == 2 || j == 3 || j == 9 ||  j==15);
+					boolean lastcolumnwall = i > 16  && ( j == 6 ||  j == 12 || j==18);
+					if (frontcolumnwall || lastcolumnwall || linewalls) {
+						locs.add(new Location(i, j));
+					}
+				}
+			}
+			this.wallLocations = locs.toArray(new Location[0]);
+			break;
+		case 7: // Textausgabe
+			this.wallLocations = new Location[] {};
+			break;
+		case 8: // Parken mit Tastatur
 			this.wallLocations = new Location[] {
 					new Location(4,9),
 					new Location(5,9),
@@ -110,7 +213,7 @@ public enum Level {
 		}
 		goal.setDirection(this.endDirection);
 		car.setDirection(this.startDirection);
-		car.setCollisionRectangle(new Point(0,0), 48, 32);
+		car.setCollisionRectangle(new Point(0,0), 32, 32);
 		GGActorCollisionListener collisionHandler=new GGActorCollisionListener() {
 			@Override
 			public int collide(Actor active, Actor passive) {
@@ -121,13 +224,14 @@ public enum Level {
 				if (car==null) {
 					return 0;
 				}
-				car.showNextSprite();
+				car.show(1);
 				if (PluginContext.gamegrid.isRunning()) {
 					System.out.println("-- Kollision! --");
 				}
-				PluginContext.executedContext.dagucar.collision = true;
+				car.collided=true;
 				PluginContext.gamegrid.refresh();
 				PluginContext.gamegrid.doPause();
+				PluginContext.executedContext.keys.add(Character.valueOf('q'));
 				return 0;
 			}
 		};

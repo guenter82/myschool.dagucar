@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
@@ -42,10 +43,10 @@ public class DaguCarPluginWindow extends JFrame {
 	private ImageIcon collapseIcon= this.createImageIcon("/image/toggle16.png", "Collapse");
 
 
-	int cells=20;
-	int cellWidth=33;
-	int gameGridWidth = this.cells * this.cellWidth;
-	Dimension gridDim=new Dimension(this.gameGridWidth,this.gameGridWidth);
+	public static final int cells=20;
+	public static final int cellWidth=33;
+	public static final int gameGridWidth = cells * cellWidth;
+	Dimension gridDim=new Dimension(gameGridWidth, gameGridWidth);
 
 	Border hintsBorder = BorderFactory.createBevelBorder(BevelBorder.LOWERED,new Color(250,253,255), new Color(160,160,190));
 	Border hintsPadding = new EmptyBorder(2, 4, 2, 2);
@@ -61,7 +62,9 @@ public class DaguCarPluginWindow extends JFrame {
 
 	public DaguCarPluginWindow(PluginContext context) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
 		PluginContext.window = this;
-		this.organizeComponentsInWindow();
+		JPanel panel=this.organizeComponentsInWindow();
+		// Configure the visualization of the window
+		this.configureMainWindow(panel);
 		this.pack();
 		// Calculates Size of components; must be called before Actors are added
 		// Add Numbers
@@ -74,7 +77,7 @@ public class DaguCarPluginWindow extends JFrame {
 	/*
 	 * Organize the Components (Toolbar, Split Pane with editor and game grid and debug bar ... ) in the window
 	 */
-	private void organizeComponentsInWindow() {
+	private JPanel organizeComponentsInWindow() {
 		// Content Window
 		JPanel window=new JPanel(new BorderLayout());
 		// Toolbar
@@ -108,9 +111,8 @@ public class DaguCarPluginWindow extends JFrame {
 		window.add(this.gameGrid, BorderLayout.CENTER);
 		window.add(statusZeileWrap, BorderLayout.SOUTH);
 
+		return window;
 
-		// Configure the visualization of the window
-		this.configureMainWindow(window);
 	}
 
 
@@ -119,8 +121,9 @@ public class DaguCarPluginWindow extends JFrame {
 		this.setContentPane(window);
 		this.setTitle("DaguCar - Simulation");
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		// Set default Window-Location to center
-		this.setLocationRelativeTo(null);
+		int half_x=(int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2);
+		this.setLocation(0, 0);
+
 		this.setIconImage(new ImageIcon(this.getClass().getResource("/image/dagucar32.png")).getImage());
 
 		this.addWindowListener(new WindowAdapter() {

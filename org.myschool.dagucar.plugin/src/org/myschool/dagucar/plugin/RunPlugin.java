@@ -1,6 +1,5 @@
 package org.myschool.dagucar.plugin;
 
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -26,20 +25,16 @@ public class RunPlugin {
 
 		});
 
-		level2();
-
-		//testKeyCodes();
-
-		//goS(3);
-		//goS(2);
-
-
-		//test2();
 		//testKeys();
+		allWorlds();
+	}
 
-
-		//Thread.sleep(5000);
-		//System.exit(0);
+	public static void allWorlds() {
+		for (int i=0; i<9; i++) {
+			DaguCar car = new DaguCar(0, i);
+			System.out.println("Level: " + i);
+			car.waitOnNextKey();
+		}
 
 	}
 
@@ -89,10 +84,13 @@ public class RunPlugin {
 	}
 
 	private static void testKeys() {
-		DaguCar car = new DaguCar(0);
-		for (int i=0; i<10; i++) {
-			char x=car.waitOnNextKey();
-			if (x == 'w'|| Character.getNumericValue(x) == KeyEvent.VK_UP) {
+		DaguCar car = new DaguCar(1, 2);
+		//		car.setCirclesDone(3/5.0);
+		//		car.setForwardFactor(2);
+		char x=' ';
+		for (int i=0; i<500 && x!='q' && x!=0; i++) {
+			x=car.waitOnNextKey();
+			if (x == 'w') {
 				car.forward();
 			}
 			if (x == 's') {
@@ -103,22 +101,6 @@ public class RunPlugin {
 			}
 			if (x == 'd') {
 				car.right();
-			}
-			if (x == 'q' || x == 0) {
-				System.exit(0);
-			}
-		}
-	}
-
-	private static void testKeyCodes() {
-		DaguCar car = new DaguCar(0);
-		for (int i=0; i<10; i++) {
-			int x=car.waitOnNextKeyCode();
-			if (x == KeyEvent.VK_W || x == KeyEvent.VK_UP) {
-				car.forward();
-			}
-			if (x == KeyEvent.VK_Q || x == 0) {
-				System.exit(0);
 			}
 		}
 	}
@@ -142,6 +124,53 @@ public class RunPlugin {
 		DaguCarRemote remote=new DaguCarRemote(3);
 		remote.sendNextState(DirectionCommand.NORTH, SpeedCommand.VERY_FASTEST, 1000);
 		remote.sendNextState(DirectionCommand.SOUTH, SpeedCommand.STOP, 1000);
+	}
+
+	public static void level3() {
+		DaguCar car = new DaguCar(0,3);
+		car.forward();
+		car.forward();
+		car.forward();
+
+		gotoRight(car);
+		goLeft(car);
+		gotoRight(car);
+		goLeft(car);
+		gotoRight(car);
+		goLeft(car);
+		for (int i=1; i<=15; i++) {
+			car.forward();
+		}
+	}
+
+	public static void goLeft(DaguCar car) {
+		for (int i=1; i<=12; i++) {
+			car.forward();
+		}
+		car.left();
+		car.left();
+		car.back();
+		car.back();
+		car.back();
+		car.left();
+		car.left();
+	}
+
+	public static void gotoRight(DaguCar car) {
+		for (int i=1; i<=12; i++) {
+			car.forward();
+		}
+		car.right();
+		car.right();
+		car.back();
+		car.back();
+		car.back();
+		car.right();
+		car.right();
+	}
+
+	public static void level1() {
+		DaguCar car = new DaguCar(0,1);
 	}
 
 

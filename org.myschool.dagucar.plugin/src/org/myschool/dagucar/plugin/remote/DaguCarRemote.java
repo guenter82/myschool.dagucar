@@ -68,7 +68,7 @@ public class DaguCarRemote implements Runnable{
 	private final Thread thread;
 	private final int number;
 	private Task currentTask;
-	private double factor=1.0;
+	public double factor=1.0;
 	//determines how many circles are done in calibration.
 	public double circlesDone=1.0;
 
@@ -168,11 +168,9 @@ public class DaguCarRemote implements Runnable{
 	 */
 	public void sendGoStraight(CarAction action)  {
 		try {
-			this.sendNextState(DirectionCommand.NORTH,SpeedCommand.STOP, 100, action);
-			this.sendNextState(DirectionCommand.NORTH,SpeedCommand.CRUISING, 200, null); //speed up
-			this.sendNextState(DirectionCommand.NORTH,SpeedCommand.MOVING_RIGHT_ALONG, (int)(200*this.factor), null); //speed up
-			this.sendNextState(DirectionCommand.NORTH,SpeedCommand.CRUISING, 200, null); //speed up
-			this.sendNextState(DirectionCommand.SOUTH,SpeedCommand.STOP, 200, null); //role along
+			this.sendNextState(DirectionCommand.NORTH,SpeedCommand.CRUISING, 50, action);
+			this.sendNextState(DirectionCommand.NORTH,SpeedCommand.CRUISING, (int)(240*this.factor), null); //speed up
+			this.sendNextState(DirectionCommand.SOUTH,SpeedCommand.STOP, 10, null); //role along
 		} catch (Exception e) {
 			System.out.println("Could not send 'go straight' to DaguCar: " + e.getMessage());
 			e.printStackTrace();
@@ -181,11 +179,15 @@ public class DaguCarRemote implements Runnable{
 
 	public void sendGoBack(CarAction action) {
 		try {
-			this.sendNextState(DirectionCommand.SOUTH,SpeedCommand.STOP, 100, action);
-			this.sendNextState(DirectionCommand.SOUTH,SpeedCommand.EASY_GOING, 250, null); //speed up
-			this.sendNextState(DirectionCommand.SOUTH,SpeedCommand.CRUISING, (int)(400*this.factor), null); //speed up
-			this.sendNextState(DirectionCommand.SOUTH,SpeedCommand.EASY_GOING, 250, null); //speed up
-			this.sendNextState(DirectionCommand.NORTH,SpeedCommand.STOP, 200, null); //role along
+			if (this.factor>1.5) {
+				this.sendNextState(DirectionCommand.SOUTH,SpeedCommand.MOVING_RIGHT_ALONG, 50, action);
+				this.sendNextState(DirectionCommand.SOUTH,SpeedCommand.MOVING_RIGHT_ALONG, (int)(250*this.factor/1.5), null);
+			} else {
+				this.sendNextState(DirectionCommand.SOUTH,SpeedCommand.CRUISING, 50, action);
+				this.sendNextState(DirectionCommand.SOUTH,SpeedCommand.CRUISING, (int)(250*this.factor), null); //speed up
+			}
+
+			this.sendNextState(DirectionCommand.NORTH,SpeedCommand.STOP, 0, null); //role along
 		} catch (Exception e) {
 			System.out.println("Could not send 'go straight' to DaguCar: " + e.getMessage());
 			e.printStackTrace();
@@ -195,9 +197,10 @@ public class DaguCarRemote implements Runnable{
 	public void sendGoFrontLeft(CarAction action) {
 		try {
 			this.sendNextState(DirectionCommand.NORTHWEST,SpeedCommand.STOP, 100, action);
-			this.sendNextState(DirectionCommand.NORTHWEST,SpeedCommand.MOVING_RIGHT_ALONG, 200, null); //speed up
-			this.sendNextState(DirectionCommand.NORTHWEST,SpeedCommand.MOVING_QUICK, (int)(340/this.circlesDone), null); //hold speed
-			this.sendNextState(DirectionCommand.SOUTHWEST,SpeedCommand.STOP, 200, null); //role along
+			this.sendNextState(DirectionCommand.NORTHWEST,SpeedCommand.CRUISING, (int)(200/this.circlesDone), null); //hold speed
+			this.sendNextState(DirectionCommand.NORTHWEST,SpeedCommand.MOVING_RIGHT_ALONG, (int)(550/this.circlesDone), null); //hold speed
+			this.sendNextState(DirectionCommand.SOUTHWEST,SpeedCommand.SLOW, 50, null); //role along
+			this.sendNextState(DirectionCommand.SOUTH,SpeedCommand.STOP, 0, null); //role along
 		} catch (Exception e) {
 			System.out.println("Could not send 'go front left ' to DaguCar: " + e.getMessage());
 			e.printStackTrace();
@@ -207,9 +210,10 @@ public class DaguCarRemote implements Runnable{
 	public void sendGoFrontRight(CarAction action) {
 		try {
 			this.sendNextState(DirectionCommand.NORTHEAST,SpeedCommand.STOP, 100, action);
-			this.sendNextState(DirectionCommand.NORTHEAST,SpeedCommand.MOVING_RIGHT_ALONG, 200, null); //speed up
-			this.sendNextState(DirectionCommand.NORTHEAST,SpeedCommand.MOVING_QUICK, (int)(340/this.circlesDone), null); //hold speed
-			this.sendNextState(DirectionCommand.SOUTHEAST,SpeedCommand.STOP, 200, null); //role along
+			this.sendNextState(DirectionCommand.NORTHEAST,SpeedCommand.CRUISING, (int)(200/this.circlesDone), null); //hold speed
+			this.sendNextState(DirectionCommand.NORTHEAST,SpeedCommand.MOVING_RIGHT_ALONG, (int)(550/this.circlesDone), null); //hold speedf
+			this.sendNextState(DirectionCommand.SOUTHEAST,SpeedCommand.SLOW, 50, null); //role along
+			this.sendNextState(DirectionCommand.SOUTH,SpeedCommand.STOP, 0, null); //role along
 		} catch (Exception e) {
 			System.out.println("Could not send 'go front left ' to DaguCar: " + e.getMessage());
 			e.printStackTrace();
@@ -226,6 +230,9 @@ public class DaguCarRemote implements Runnable{
 	private void sendNextState(DirectionCommand direction, SpeedCommand speed, int milliseconds, CarAction action) throws IOException, InterruptedException {
 		this.con.send((byte) (direction.code | speed.code));
 		Thread.sleep(milliseconds);
+		if (action!=null) {
+			System.out.println("DaguCar " +  action);
+		}
 
 		//this.queue((byte) (direction.code | speed.code), milliseconds, action);
 	}

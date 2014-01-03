@@ -1,7 +1,6 @@
 package org.myschool.dagucar.plugin;
 
 import java.awt.KeyboardFocusManager;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -58,6 +57,10 @@ public class DaguCar {
 		this.context.remote.circlesDone=circlesDone;
 	}
 
+	public void setForwardFactor(double factor) {
+		this.context.remote.factor=factor;
+	}
+
 	public void forward() {
 		this.acts.offer(CarAction.forward);
 	}
@@ -98,46 +101,38 @@ public class DaguCar {
 	}
 
 	public char waitOnNextKey() {
-		KeyEvent key=this.waitOnNextKeyEvent();
+		Character key=this.waitOnNextKeyEvent();
 		if (key==null) {
 			return 0;
 		} else {
-			return key.getKeyChar();
-		}
-	}
-
-	public int waitOnNextKeyCode() {
-		KeyEvent key=this.waitOnNextKeyEvent();
-		if (key==null) {
-			return 0;
-		} else {
-			return key.getKeyCode();
+			return key.charValue();
 		}
 	}
 
 
-	private KeyEvent waitOnNextKeyEvent() {
-		if (this.collision) {
-			throw new IllegalStateException("Keine Eingabe mehr möglich, da schon eine Kollision passierte!");
-		}
-		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventPostProcessor(Listeners.keyEventProcessor);
+
+	private Character waitOnNextKeyEvent() {
 		try {
-			KeyEvent key = null;
-			for (int i=0;i<10;i++) {
-				if (this.collision) {
-					throw new IllegalStateException("Keine Eingabe mehr möglich, da schon eine Kollision passierte!");
+			KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventPostProcessor(Listeners.keyEventProcessor);
+			try {
+				Character key = null;
+				for (int i=0;i<50;i++) {
+					key = PluginContext.executedContext.keys.poll(6000, TimeUnit.MILLISECONDS);
+					if (key!=null) {
+						return key;
+					}
 				}
-				key = PluginContext.executedContext.keys.poll(6000, TimeUnit.MILLISECONDS);
-				if (key!=null) {
-					return key;
-				}
+				throw new IllegalStateException("Timeout beim Warten: 5 Minuten keine Taste gedrückt. Die Simulation wird beendet.");
+			} catch (InterruptedException e) {
+				throw new IllegalStateException("Unterbrechung!");
+			} finally {
+				KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventPostProcessor(Listeners.keyEventProcessor);
 			}
-			PluginContext.executedContext.closeContext();
-			throw new IllegalStateException("Timeout beim Warten: 5 Minuten keine Taste gedrückt. Die Simulation wird beendet.");
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
+			if (PluginContext.executedContext.dagucar!=null) {
+				PluginContext.executedContext.dagucar.setStateText(e.getLocalizedMessage());
+			}
 			return null;
-		} finally {
-			KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventPostProcessor(Listeners.keyEventProcessor);
 		}
 	}
 
