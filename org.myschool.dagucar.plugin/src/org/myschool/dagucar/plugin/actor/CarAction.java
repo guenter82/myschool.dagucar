@@ -7,7 +7,7 @@ public enum CarAction {
 	back(true, UiText.method_car_back),
 	left(true, UiText.method_car_left),
 	right(true, UiText.method_car_right),
-	check(false, UiText.method_car_check);
+	check(false, UiText.method_car_key);
 
 	private String label;
 	private boolean showInPopup;

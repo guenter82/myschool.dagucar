@@ -20,7 +20,7 @@ import ch.aplu.jgamegrid.GGMouse;
 import ch.aplu.jgamegrid.Location;
 
 public enum Level {
-	level0("Aufgabe 0 - Gerade aus",new Location(1,9), 0, new Location(11,9), 0),
+	level0("Aufgabe 0 - Gerade aus",new Location(1,9), 0, null, 0),
 	level1("Aufgabe 1 - Hindernis", new Location(1,9), 0, new Location(18,9), 0),
 	level2("Aufgabe 2 - Wenden",new Location(1,9), 0, new Location(4,9), 180),
 	level3("Aufgabe 3 - Hindernis und wenden", new Location(1,9), 0, new Location(18,9), 180),
@@ -199,19 +199,22 @@ public enum Level {
 		DaguCarActor car = new DaguCarActor(true, img, img_fire);
 		PluginContext.executedContext.actor=car;
 		car.setSlowDown(4);
-		Actor goal=new GoalActor(true, img_grey) ;
+		if (this.endLocation!=null) {
+			Actor goal=new GoalActor(true, img_grey) ;
+			PluginContext.gamegrid.addActor(goal, this.endLocation);
+			goal.setDirection(this.endDirection);
+			if (this.endDirection==180) {
+				goal.setVertMirror(true);
+			}
+		}
 		for (Location l:this.wallLocations) {
 			Actor wall=new GoalActor(false, img_wall) ;
 			PluginContext.gamegrid.addActor(wall, l);
 			car.addCollisionActor(wall);
 		}
 
-		PluginContext.gamegrid.addActor(goal, this.endLocation);
+
 		PluginContext.gamegrid.addActor(car, this.startLocation);
-		if (this.endDirection==180) {
-			goal.setVertMirror(true);
-		}
-		goal.setDirection(this.endDirection);
 		car.setDirection(this.startDirection);
 		car.setCollisionRectangle(new Point(0,0), 32, 32);
 		GGActorCollisionListener collisionHandler=new GGActorCollisionListener() {
@@ -262,8 +265,11 @@ public enum Level {
 	}
 
 	public boolean checkWorld(DaguCarActor actor) {
-		if (actor == null ) {
+		if (actor == null) {
 			return false;
+		}
+		if (this.endLocation == null) {
+			return true;
 		}
 		return actor.getLocation().equals(this.endLocation) && actor.getDirection() == this.endDirection;
 
