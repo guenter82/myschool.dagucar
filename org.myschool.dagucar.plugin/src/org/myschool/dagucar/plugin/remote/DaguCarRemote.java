@@ -135,7 +135,10 @@ public class DaguCarRemote implements Runnable{
 			}
 			this.con.send(this.currentTask.code);
 			Thread.sleep(this.currentTask.sleepmillis);
-		} catch (IOException | InterruptedException e) {
+		} catch (IOException e) {
+			System.out.println("Coud not run task " + this.currentTask);
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			System.out.println("Coud not run task " + this.currentTask);
 			e.printStackTrace();
 		}

@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.SwingUtilities;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import org.myschool.dagucar.plugin.actor.CarAction;
 import org.myschool.dagucar.plugin.level.Level;
@@ -91,8 +90,8 @@ public class DaguCar {
 						}
 
 					});
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-						| UnsupportedLookAndFeelException e) {
+				} catch (/*ClassNotFoundException | InstantiationException | IllegalAccessException
+						| UnsupportedLookAndFeelException*/ Exception e) {
 					throw new IllegalStateException("Konnte das DaguCar Simulationsfenster nicht öffnen.", e);
 				}
 
@@ -163,6 +162,10 @@ public class DaguCar {
 	{
 		//System.out.println("DaguCar destroyed");
 		super.finalize(); //not necessary if extending Object.
+	}
+
+	public DaguCarRemote getRemote() {
+		return PluginContext.executedContext.remote;
 	}
 
 

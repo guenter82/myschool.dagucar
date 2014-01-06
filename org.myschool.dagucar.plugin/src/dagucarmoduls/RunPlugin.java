@@ -1,9 +1,10 @@
-package org.myschool.dagucar.plugin;
+package dagucarmoduls;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 
+import org.myschool.dagucar.plugin.PluginContext;
 import org.myschool.dagucar.plugin.remote.DaguCarRemote;
 import org.myschool.dagucar.plugin.remote.DirectionCommand;
 import org.myschool.dagucar.plugin.remote.SpeedCommand;
@@ -25,8 +26,8 @@ public class RunPlugin {
 
 		});
 
-		//testKeys();
-		allWorlds();
+		testKeys();
+		//allWorlds();
 	}
 
 	public static void allWorlds() {
@@ -84,7 +85,7 @@ public class RunPlugin {
 	}
 
 	private static void testKeys() {
-		DaguCar car = new DaguCar(1, 2);
+		DaguCar car = new DaguCar(2, 2);
 		//		car.setCirclesDone(3/5.0);
 		//		car.setForwardFactor(2);
 		char x=' ';

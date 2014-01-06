@@ -103,17 +103,7 @@ public enum Level {
 					new Location(8,12),
 			};
 			break;
-		case 3: //other side and turn around
-			this.wallLocations = new Location[] {
-					new Location(12,6),
-					new Location(12,7),
-					new Location(12,8),
-					new Location(12,9),
-					new Location(12,10),
-					new Location(12,11),
-					new Location(12,12)};
-			break;
-		case 4: // parking
+		case 3: // parking
 			this.wallLocations = new Location[] {
 					new Location(4,9),
 					new Location(5,9),
@@ -130,6 +120,16 @@ public enum Level {
 					new Location(15,14),
 					new Location(14,14)
 			};
+			break;
+		case 4: //other side and turn around
+			this.wallLocations = new Location[] {
+					new Location(12,6),
+					new Location(12,7),
+					new Location(12,8),
+					new Location(12,9),
+					new Location(12,10),
+					new Location(12,11),
+					new Location(12,12)};
 			break;
 		case 5: //labyrinth
 			List<Location> locs=new ArrayList<Location>();
