@@ -1,4 +1,4 @@
-package dagucarmoduls;
+package dagucarmodule;
 
 
 public class DaguCar extends org.myschool.dagucar.plugin.DaguCar {

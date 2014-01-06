@@ -17,7 +17,6 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -131,8 +130,10 @@ public class DaguCarPluginWindow extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
 				PluginContext.executedContext.closeContext();
-				PluginContext.executedContext.dagucar.level.initWorld();
-				JOptionPane.showMessageDialog(DaguCarPluginWindow.this, "Die Simulation wurde zurück gesetzt.", "Nachricht", JOptionPane.INFORMATION_MESSAGE);
+				arg0.getWindow().dispose();
+				PluginContext.executedContext.keys.add(Character.valueOf('q'));
+				//				PluginContext.executedContext.dagucar.level.initWorld();
+				//				JOptionPane.showMessageDialog(DaguCarPluginWindow.this, "Die Simulation wurde zurück gesetzt.", "Nachricht", JOptionPane.INFORMATION_MESSAGE);
 			}
 
 		});
