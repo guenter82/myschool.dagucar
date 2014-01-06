@@ -2,12 +2,13 @@ package org.myschool.dagucar.plugin.remote;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+
+import javax.microedition.io.Connector;
+import javax.microedition.io.StreamConnection;
 
 public class BluetoothCommunicator {
 
-	private ConnectionWrapper con;
+	private StreamConnection con;
 	private OutputStream os;
 	private final DaguCarRemote daguCarRemote;
 	private final String serviceURL;
@@ -18,7 +19,7 @@ public class BluetoothCommunicator {
 
 	}
 
-	private OutputStream openConnection() throws IOException, ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	private OutputStream openConnection() throws IOException {
 
 		//System.out.println("Used Bluetooth Stack: " + LocalDevice.getProperty("bluecove.stack"));
 		if (this.serviceURL==null) {
@@ -27,12 +28,7 @@ public class BluetoothCommunicator {
 		/*
 		 * Open the connection to the bluetooth server
 		 */
-		Class<?> connectorClass= this.getClass().getClassLoader().loadClass("javax.microedition.io.Connector");
-		this.getClass().getClassLoader().loadClass("com.intel.bluetooth.BluetoothRFCommClientConnection");
-		Method openMethod=connectorClass.getDeclaredMethod("open", String.class);
-		Object object = openMethod.invoke(null, this.serviceURL.toString());
-		this.con = new ConnectionWrapper(object);
-
+		this.con =(StreamConnection)Connector.open(this.serviceURL.toString());
 		/*
 		 * Sends data to remote device
 		 */
@@ -63,13 +59,9 @@ public class BluetoothCommunicator {
 		} catch (Throwable e) {
 			this.cleanup();
 			//retry
-			try {
-				this.openConnection();
-				this.os.write(code);
-				this.os.flush();
-			} catch (Exception e2) {
-				throw new IOException(e2);
-			}
+			this.openConnection();
+			this.os.write(code);
+			this.os.flush();
 		}
 	}
 
@@ -85,7 +77,7 @@ public class BluetoothCommunicator {
 			this.openConnection();
 			return true;
 		} catch (Throwable e) {
-			System.out.println(this.daguCarRemote.toString() +" currently not online: " + e.getLocalizedMessage());
+			System.out.println(this.daguCarRemote.toString() +" currently not online: " + e.getMessage());
 			return false;
 		}
 	}

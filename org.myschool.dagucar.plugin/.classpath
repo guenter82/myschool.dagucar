@@ -7,5 +7,6 @@
 			<attribute name="javadoc_location" value="http://www.aplu.ch/classdoc/jgamegrid/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/bluecove-2.1.1-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
