@@ -10,12 +10,21 @@ import org.myschool.dagucar.plugin.remote.DirectionCommand;
 import org.myschool.dagucar.plugin.remote.SpeedCommand;
 
 
-public class RunPlugin {
+public class TestRunPlugin {
 
 	public static void main(String[] args) throws InterruptedException, IOException {
 
+		DaguCarBluetooth b=createDaguCarBluetooth(2);
+		b.send((byte) 0x1a, 1000);
+		b.send((byte) 0x35, 2000);
+		b.close();
 
-		DaguCar car = new DaguCar(0);
+		//testKeys();
+		//allWorlds();
+	}
+
+	public static DaguCar createDaguCar(int number) throws InterruptedException {
+		DaguCar car = new DaguCar(number); //test device discovery with 5; 0 is no daguCar
 		Thread.sleep(1000);
 		PluginContext.window.addWindowListener(new WindowAdapter() {
 
@@ -25,10 +34,14 @@ public class RunPlugin {
 			}
 
 		});
-
-		testKeys();
-		//allWorlds();
+		return car;
 	}
+
+	public static DaguCarBluetooth createDaguCarBluetooth(int number) {
+		DaguCarBluetooth b = new DaguCarBluetooth(number);
+		return b;
+	}
+
 
 	public static void allWorlds() {
 		for (int i=0; i<9; i++) {

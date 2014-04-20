@@ -74,8 +74,13 @@ public class DaguCarRemote implements Runnable{
 
 
 	public DaguCarRemote(int number) {
-		this.serviceUrl = "btspp://"+devices[number-1]+":1;authenticate=false;encrypt=false;master=false";
 		this.number = number;
+		if (this.number>0 && this.number<5) {
+			this.serviceUrl = "btspp://"+devices[number-1]+":1;authenticate=false;encrypt=false;master=false";
+		} else {
+			RemoteDeviceDiscovery.remoteDeviceDiscovery.run();
+			this.serviceUrl = RemoteDeviceDiscovery.remoteDeviceDiscovery.serviceUrl;
+		}
 		this.connected = this.connect();
 		this.currentTask = null;
 		this.thread = new Thread(this, "DaguCar-" + this.number + "-Thread");
@@ -251,6 +256,10 @@ public class DaguCarRemote implements Runnable{
 	@Override
 	public String toString() {
 		return "DaguCar " + this.number;
+	}
+
+	public boolean isIdle() {
+		return this.queue.isEmpty();
 	}
 
 	public void close() {
